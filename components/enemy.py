@@ -5,6 +5,7 @@ from .action import Action
 import json
 import os
 from .attack_pattern import *
+from .constants import *
 
 class Enemy:
     def __init__(self, pos_x, pos_y):
@@ -15,7 +16,7 @@ class Enemy:
         self.health = 100.0
         self.bullets = []
 
-        #Ini diganti entar
+        #Ini diganti entar biar bisa attack lain
         with open('attacks\\test_attack.json', "r") as f:
             self.actions_data = json.load(f)
 
@@ -25,7 +26,6 @@ class Enemy:
         self.start_action("test_stage")
     
     def take_damage(self):
-        DAMAGE = 1
         if self.health > 0:
             self.health -= DAMAGE
         print(self.health)

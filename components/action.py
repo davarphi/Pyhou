@@ -29,6 +29,7 @@ class Action:
             self.step_timer = 0
             self.current_step += 1
 
+    # Execute step
     def execute_step(self, enemy, step, player_pos):
         action_type = step.get("type", "wait")
 

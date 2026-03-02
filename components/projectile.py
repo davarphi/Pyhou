@@ -1,10 +1,11 @@
 import pygame
 from pygame.math import Vector2
 from math import sin, cos, pi
+from .constants import *
 
 class Projectile:
-    bound_w = 576
-    bound_h = 672
+    bound_w = WIDTH
+    bound_h = HEIGHT
     
     def __init__(self, pos_x, pos_y, angle, speed=10):
         self.start = Vector2(pos_x, pos_y)

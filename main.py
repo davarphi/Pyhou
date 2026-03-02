@@ -1,11 +1,12 @@
 import pygame
 from components.player import Player
 from components.enemy import Enemy
+from components.constants import *
 import os
 
 pygame.init()
 
-WINDOW = pygame.display.set_mode((576, 672))
+WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Pyhou")
 
 CLOCK = pygame.time.Clock()
@@ -83,8 +84,10 @@ pygame.quit()
 
 if is_player_touch_enemy:
     print("Player hit the enemy!")
+
 print(f"Bullets hit : {player.bullets_hit}")
 print(f"Time finished: {time_finish/1000} s")
+
 if enemy.health > 0:
     print(f"Enemy last health : {enemy.health}")
 else:

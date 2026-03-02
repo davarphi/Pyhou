@@ -1,1 +1,0 @@
-1. Should the bullet disappear when touching boundary or completely offscreen?

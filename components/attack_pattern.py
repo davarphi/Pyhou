@@ -3,6 +3,7 @@ from pygame.math import Vector2
 from .enemy_projectile import EnemyProjectile
 from random import randint, random
 
+# Make bullets with all the need speed & angle
 def get_fan_pattern_bullets(cnt1, cnt2, ang1, ang2, spe1, spe2, pos=Vector2(0,0), rel_with=0):
     new_projectile = []
     for i in range(cnt2):
