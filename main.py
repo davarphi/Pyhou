@@ -48,8 +48,8 @@ def is_bullet_hit(bullet, object):
 
 while running:
     WINDOW.fill((128, 128, 128))
-
     CLOCK.tick(60)
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             exit()
@@ -60,7 +60,6 @@ while running:
             
     if (player_input["shoot"]):
         player.shoot(player_input)
-
 
     player.update_pos(player_input)
     player.update_proj()

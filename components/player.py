@@ -46,7 +46,6 @@ class Player:
         for bullet in self.bullets:
             bullet.draw(window)
 
-
     def shoot(self, player_state):
         if (player_state["slow"]):
             attack_degs = [pi/2-radians(2), pi/2, pi/2+radians(2)]
