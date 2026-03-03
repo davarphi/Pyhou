@@ -40,5 +40,5 @@ class Action:
                 pass
             case "move":
                 enemy.update_pos(step)
-            case "teleport":
+            case "teleport": #Not yet
                 pass
