@@ -17,6 +17,8 @@ class Player:
         self.cooldown_time = 10
         self.cooldown_time_slow = 8
         self.shot_cooldown = 0
+        self.bullets_shot = 0
+        self.bullets_got_hit = 0
 
         self.bullets_hit = 0
 
@@ -39,13 +41,13 @@ class Player:
         elif (self.pos.y > self.bound_h - self.r): 
             self.pos.y = self.bound_h - self.r
     
-    def draw(self, window):
-        # Need to change later
-        pygame.draw.circle(window, (128, 0, 0), (self.pos.x, self.pos.y), self.r)
-        pygame.draw.circle(window, (0, 0, 0), (self.pos.x, self.pos.y), self.r, 1)
+    # def draw(self, window):
+    #     # Need to change later
+    #     pygame.draw.circle(window, (128, 0, 0), (self.pos.x, self.pos.y), self.r)
+    #     pygame.draw.circle(window, (0, 0, 0), (self.pos.x, self.pos.y), self.r, 1)
 
-        for bullet in self.bullets:
-            bullet.draw(window)
+    #     for bullet in self.bullets:
+    #         bullet.draw(window)
 
     def shoot(self, player_state):
         if (player_state["slow"]):
@@ -59,6 +61,7 @@ class Player:
             for angle in attack_degs:
                 bullet = Projectile(self.pos.x, self.pos.y + self.r // 2, angle, speed)
                 self.bullets.append(bullet)
+                self.bullets_shot += 1
 
             if (player_state["slow"]):
                 self.shot_cooldown = self.cooldown_time_slow

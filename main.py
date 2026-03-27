@@ -47,6 +47,7 @@ def check_enemy_collisions():
     for bullet in player.bullets[:]:
         if is_bullet_hit(bullet, enemy):
             bullet.is_remove = True
+            player.bullets_got_hit += 1
             enemy.take_damage()
 
 def is_bullet_hit(bullet, object):
@@ -92,6 +93,13 @@ pygame.quit()
 if is_player_touch_enemy:
     print("Player hit the enemy!")
 
+print(f"Bullets shot : {player.bullets_shot}")
+
+if player.bullets_shot == 0:
+    player.bullets_shot = 1
+
+accuracy = player.bullets_got_hit/player.bullets_shot
+print(f"Accuracy : {accuracy:.2f}")
 print(f"Bullets hit : {player.bullets_hit}")
 print(f"Time finished: {time_finish/1000} s")
 

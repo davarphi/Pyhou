@@ -97,13 +97,13 @@ class Enemy:
             if bullet.is_remove:
                 self.bullets.remove(bullet)
 
-    def draw(self, window):
-        # Need to change
-        pygame.draw.circle(window, (0, 128, 128), (self.pos.x, self.pos.y), self.r)
-        pygame.draw.circle(window, (0, 0, 0), (self.pos.x, self.pos.y), self.r, 1) 
+    # def draw(self, window):
+    #     # Need to change
+    #     pygame.draw.circle(window, (0, 128, 128), (self.pos.x, self.pos.y), self.r)
+    #     pygame.draw.circle(window, (0, 0, 0), (self.pos.x, self.pos.y), self.r, 1) 
 
-        for bullet in self.bullets:
-            bullet.draw(window)
+    #     for bullet in self.bullets:
+    #         bullet.draw(window)
      
             
 
