@@ -16,14 +16,11 @@ class Enemy:
         self.health = 100.0
         self.bullets = []
 
-        #Ini diganti entar biar bisa attack lain
         path = os.path.join("attacks", pattern_file) 
         with open(path, "r") as f:
             self.actions_data = json.load(f)
-
         self.current_action = None
-
-        #Ini juga
+        
         self.start_action()
     
     def take_damage(self):
@@ -80,7 +77,7 @@ class Enemy:
     
     #Utlity function
     def update_action(self, player_pos):
-        if self.current_action:
+        if self.current_action is not None:
             self.current_action.update(self, player_pos)
 
             if self.current_action.completed:

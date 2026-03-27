@@ -6,17 +6,13 @@ class Action:
         self.current_step = 0
         self.step_timer = 0
         self.completed = False
-        self.is_loop = action_data.get("loop", False)
 
     def update(self, enemy, player_pos):
         if self.completed:
             return
         
         if self.current_step >= len(self.steps):
-            if self.is_loop:
-                self.current_step = 0
-            else:
-                self.completed = True
+            self.current_step = 0
             return
         
         step = self.steps[self.current_step]

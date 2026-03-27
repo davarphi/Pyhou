@@ -1,7 +1,9 @@
 {
-    "loop": false,
     "steps": [
             {"type": "move", "vel_x": -1, "vel_y": 0, "speed": 5, "duration": 30},
+            {"type": "shoot", "pattern": "fan_aim", "cnt1":10, "cnt2":4, "ang1": 0, "ang2": 10, "spe1": 8, "spe2": 5},
+            {"type": "wait", "duration": 100},
+            {"type": "move", "vel_x": 1, "vel_y": 0, "speed": 5, "duration": 30},
             {"type": "shoot", "pattern": "fan_aim", "cnt1":10, "cnt2":4, "ang1": 0, "ang2": 10, "spe1": 8, "spe2": 5},
             {"type": "wait", "duration": 100}
     ]
