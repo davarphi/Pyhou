@@ -1,5 +1,15 @@
 TARGET TO DO
-1. Rework the pygame to have array input 
-2. Frame skipping could be good (3-4). Because if we don't do this, the game would be twitchy.
+1. Rework the pygame to have array input
+2. Make the damn gym evironment
+3. Handle action mapping
+4. Handle optional rendering
+5. Test & Plug
+
+Ideas : 
+> Frame skipping could be good (3-4). Because if we don't do this, the game would be twitchy.
 In Gymnasium can be Action Repeat, TimeLimit
-3. 
+ 
+
+Optional : 
+
+- Accuracy defintion could be tweaked
