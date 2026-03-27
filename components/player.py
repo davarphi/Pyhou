@@ -40,6 +40,7 @@ class Player:
             self.pos.y = self.bound_h - self.r
     
     def draw(self, window):
+        # Need to change later
         pygame.draw.circle(window, (128, 0, 0), (self.pos.x, self.pos.y), self.r)
         pygame.draw.circle(window, (0, 0, 0), (self.pos.x, self.pos.y), self.r, 1)
 

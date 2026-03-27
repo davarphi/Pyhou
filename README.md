@@ -1,4 +1,5 @@
-This is a simplification of Touhou or a bullet hell game in general.
+This is a simplification of Touhou or a bullet hell game in general for RL Learning
+This is still a WIP. Maybe an easy-to-use version will come.
 
 To use, just do the following:
 1. Install `uv`

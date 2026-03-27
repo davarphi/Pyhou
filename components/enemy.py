@@ -3,12 +3,12 @@ from math import atan2, radians, degrees
 from pygame.math import Vector2
 from .action import Action
 import json
-import os
 from .attack_pattern import *
 from .constants import *
+import os
 
 class Enemy:
-    def __init__(self, pos_x, pos_y):
+    def __init__(self, pos_x, pos_y, pattern_file):
         self.pos = Vector2(pos_x, pos_y)
         self.vel = Vector2(0, 0)
         self.speed = 0
@@ -17,22 +17,22 @@ class Enemy:
         self.bullets = []
 
         #Ini diganti entar biar bisa attack lain
-        with open('attacks\\test_attack.json', "r") as f:
+        path = os.path.join("attacks", pattern_file) 
+        with open(path, "r") as f:
             self.actions_data = json.load(f)
 
         self.current_action = None
 
         #Ini juga
-        self.start_action("test_stage")
+        self.start_action()
     
     def take_damage(self):
         if self.health > 0:
             self.health -= DAMAGE
         print(self.health)
 
-    def start_action(self, action_name):
-        if action_name in self.actions_data:
-            self.current_action = Action(self.actions_data[action_name])
+    def start_action(self):
+        self.current_action = Action(self.actions_data)
 
     def shoot(self, step, player_pos):
         pattern_name = step.get("pattern")
@@ -101,6 +101,7 @@ class Enemy:
                 self.bullets.remove(bullet)
 
     def draw(self, window):
+        # Need to change
         pygame.draw.circle(window, (0, 128, 128), (self.pos.x, self.pos.y), self.r)
         pygame.draw.circle(window, (0, 0, 0), (self.pos.x, self.pos.y), self.r, 1) 
 

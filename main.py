@@ -3,6 +3,12 @@ from components.player import Player
 from components.enemy import Enemy
 from components.constants import *
 import os
+import argparse
+
+
+parser = argparse.ArgumentParser(description="Pyhou")
+parser.add_argument("--pattern", type=str, default="test_attack.json", help="Attack pattern to use")
+args = parser.parse_args()
 
 pygame.init()
 
@@ -13,7 +19,7 @@ CLOCK = pygame.time.Clock()
 running = True
 
 player = Player(WINDOW.get_width()/2, WINDOW.get_height()/2)
-enemy = Enemy(WINDOW.get_width()/2, 40)
+enemy = Enemy(WINDOW.get_width()/2, 40, args.pattern)
 player_input = {"left":False, "right":False, "up":False, "down":False, "slow":False, "shoot":False}
 is_player_touch_enemy = False
 
@@ -46,6 +52,7 @@ def check_enemy_collisions():
 def is_bullet_hit(bullet, object):
     distance = bullet.pos.distance_to(object.pos)
     return (distance < bullet.r + object.r)
+
 
 while running:
     WINDOW.fill((128, 128, 128))

@@ -20,6 +20,7 @@ class EnemyProjectile():
         self.pos += self.vel
     
     def draw(self, window):
+        # Need to change
         pygame.draw.circle(window, (255, 255, 255, 50), (self.pos.x, self.pos.y), self.r)
         pygame.draw.circle(window, (0, 0, 128, 50), (self.pos.x, self.pos.y), self.r, 2)
 

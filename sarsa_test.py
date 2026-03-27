@@ -4,12 +4,12 @@ import random
 
 env = gym.make("Taxi-v3")
 
-alpha = 0.9 # Learning rate 1-alpha
+alpha = 0.5 # Learning rate 1-alpha. In SARSA, learning rate is much lower than Q-Learning
 gamma = 0.95 # Discount rate
 epsilon = 1.0 # Probability of exploration
 epsilon_decay = 0.999 # Decay of probability of exploration
 min_epsilon = 0.01 # SO that exploration can always be chosen
-num_episodes = 15000 # Episode untuk training
+num_episodes = 20000 # Episode untuk training
 max_steps = 100 # Maksa berhenti agar tidak lama
 
 q_table = np.zeros((env.observation_space.n, env.action_space.n))
@@ -50,7 +50,9 @@ for episodes in range(num_episodes):
 env = gym.make("Taxi-v3", render_mode = "human")
 
 print("Begin testing")
-for episode in range(5):
+TEST_EPS = 10
+sucess_eps = 0
+for episode in range(TEST_EPS):
     state, _ = env.reset()
 
     done = False
@@ -66,12 +68,14 @@ for episode in range(5):
         if done:
             env.render()
             print("Finished episode ", episode, "with reward ", reward)
+            sucess_eps += 1
             break
+
     
     else:
         print("Task failed.")
 
-
+print("Success rate", sucess_eps/TEST_EPS)
 env.close()
 
 
