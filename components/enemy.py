@@ -93,7 +93,7 @@ class Enemy:
 
     def update_pos_til(self, step, current_tick):
         del_move = Vector2(step.get("del_x"), step.get("del_y"))
-        self.pos = self.waypoint_start_pos + del_move * (current_tick / step.get("duration"))
+        self.pos = self.waypoint_start_pos + del_move * ((current_tick + 1) / step.get("duration"))
 
     def update_proj(self):
         for bullet in self.bullets[:]:

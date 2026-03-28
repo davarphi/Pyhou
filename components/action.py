@@ -19,9 +19,10 @@ class Action:
         duration = step.get("duration", 1)
         
         self.execute_step(enemy, step, player_pos, self.step_timer)
+        print(self.step_timer)
         self.step_timer += 1
 
-        if self.step_timer > duration:
+        if self.step_timer >= duration:
             self.step_timer = 0
             self.current_step += 1
 
