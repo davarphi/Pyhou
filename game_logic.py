@@ -2,7 +2,6 @@ from components.player import Player
 from components.enemy import Enemy
 from components.constants import *
 from pygame.math import Vector2
-from math import radians, pi
 
 
 DIRECTIONAL_VECTOR = {
@@ -50,8 +49,6 @@ class Game:
         self.check_player_collisions()
 
         self.tick += 1
-
-        return self.is_game_done()
 
     def is_game_done(self):
         enemy_to_player_dist = self.enemy.pos.distance_to(self.player.pos)

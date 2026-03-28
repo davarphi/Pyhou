@@ -15,6 +15,9 @@ class Enemy:
         self.r = 14
         self.health = 100.0
         self.bullets = []
+        self.dummy = 0
+
+        self.waypoint_start_pos = Vector2(0, 0)
 
         path = os.path.join("attacks", pattern_file) 
         with open(path, "r") as f:
@@ -87,6 +90,10 @@ class Enemy:
         self.vel = Vector2(step.get("vel_x"), step.get("vel_y"))
         self.speed = step.get("speed")
         self.pos += self.vel*self.speed
+
+    def update_pos_til(self, step, current_tick):
+        del_move = Vector2(step.get("del_x"), step.get("del_y"))
+        self.pos = self.waypoint_start_pos + del_move * (current_tick / step.get("duration"))
 
     def update_proj(self):
         for bullet in self.bullets[:]:

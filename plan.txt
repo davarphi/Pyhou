@@ -1,5 +1,4 @@
 TARGET TO DO
-1. Rework the pygame to have array input
 2. Make the damn gym evironment
 3. Handle action mapping
 4. Handle optional rendering
@@ -9,7 +8,8 @@ Ideas :
 > Frame skipping could be good (3-4). Because if we don't do this, the game would be twitchy.
 In Gymnasium can be Action Repeat, TimeLimit
  
+Non-urgent Bug : 
+> Float drift when using move_til. I think it's OBOE
 
 Optional : 
-
 - Accuracy defintion could be tweaked

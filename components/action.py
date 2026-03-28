@@ -18,15 +18,15 @@ class Action:
         step = self.steps[self.current_step]
         duration = step.get("duration", 1)
         
-        self.execute_step(enemy, step, player_pos)
+        self.execute_step(enemy, step, player_pos, self.step_timer)
         self.step_timer += 1
 
-        if self.step_timer >= duration:
+        if self.step_timer > duration:
             self.step_timer = 0
             self.current_step += 1
 
     # Execute step
-    def execute_step(self, enemy, step, player_pos):
+    def execute_step(self, enemy, step, player_pos, current_tick):
         action_type = step.get("type", "wait")
 
         match action_type:
@@ -36,5 +36,10 @@ class Action:
                 pass
             case "move":
                 enemy.update_pos(step)
-            case "teleport": #Not yet
+            case "move_til": #Not yet
+                if current_tick == 0:
+                    enemy.waypoint_start_pos = enemy.pos
+
+                enemy.update_pos_til(step, current_tick)
+            case "move_to":
                 pass
