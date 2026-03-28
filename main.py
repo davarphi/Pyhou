@@ -2,7 +2,7 @@ import pygame
 from components.player import Player
 from components.enemy import Enemy
 from components.constants import *
-import os
+from game_logic import Game
 import argparse
 
 
@@ -10,100 +10,99 @@ parser = argparse.ArgumentParser(description="Pyhou")
 parser.add_argument("--pattern", type=str, default="test_attack.json", help="Attack pattern to use")
 args = parser.parse_args()
 
+DIRECTION_MAP = {
+    (-1, 1): 0,
+    (0, 1): 1,
+    (1, 1): 2,
+    (-1, 0): 3,
+    (0, 0): 4,
+    (1, 0): 5,
+    (-1, -1): 6,
+    (0, -1): 7, 
+    (1, -1): 8
+}
+
 pygame.init()
 
 WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Pyhou")
 
 CLOCK = pygame.time.Clock()
-running = True
 
-player = Player(WINDOW.get_width()/2, WINDOW.get_height()/2)
-enemy = Enemy(WINDOW.get_width()/2, 40, args.pattern)
-player_input = {"left":False, "right":False, "up":False, "down":False, "slow":False, "shoot":False}
-is_player_touch_enemy = False
+game = Game(args.pattern)
 
-def check_input(key, value):
-    if key == pygame.K_LEFT:
-        player_input["left"] = value
-    elif key == pygame.K_UP:
-        player_input["up"] = value
-    elif key == pygame.K_DOWN:
-        player_input["down"] = value
-    elif key == pygame.K_RIGHT:
-        player_input["right"] = value
-    elif key == pygame.K_LSHIFT:
-        player_input["slow"] = value
-    elif key == pygame.K_z:
-        player_input["shoot"] = value
+def get_action_from_input(keys):
+    action = [4, 0, 0]
 
-def check_player_collisions():
-    for bullet in enemy.bullets[:]:
-        if is_bullet_hit(bullet, player):
-            bullet.is_remove = True
-            player.enemy_bullets_hit += 1
+    x = keys[pygame.K_RIGHT] - keys[pygame.K_LEFT]
+    y = keys[pygame.K_DOWN] - keys[pygame.K_UP]
 
-def check_enemy_collisions():
-    for bullet in player.bullets[:]:
-        if is_bullet_hit(bullet, enemy):
-            bullet.is_remove = True
-            player.player_bullets_hit += 1
-            enemy.take_damage()
+    action[0] = DIRECTION_MAP[(x, y)]
 
-def is_bullet_hit(bullet, object):
-    distance = bullet.pos.distance_to(object.pos)
-    return (distance < bullet.r + object.r)
+    if keys[pygame.K_LSHIFT]:
+        action[1] = 1
+    if keys[pygame.K_z]:
+        action[2] = 1
 
+    return action
 
-while running:
+def draw_player(window, player):
+    pygame.draw.circle(window, (128, 0, 0), (player.pos.x, player.pos.y), player.r)
+    pygame.draw.circle(window, (0, 0, 0), (player.pos.x, player.pos.y), player.r, 1)
+
+    for proj in player.bullets:
+        draw_player_proj(window, proj)
+
+def draw_player_proj(window, proj):
+    # Need to change
+    pygame.draw.circle(window, (128, 0, 0, 50), (proj.pos.x, proj.pos.y), proj.r)
+    pygame.draw.circle(window, (0,0,0,50), (proj.pos.x, proj.pos.y), proj.r, 1)
+
+def draw_enemy(window, enemy):
+    pygame.draw.circle(window, (0, 128, 128), (enemy.pos.x, enemy.pos.y), enemy.r)
+    pygame.draw.circle(window, (0, 0, 0), (enemy.pos.x, enemy.pos.y), enemy.r, 1) 
+
+    for proj in enemy.bullets:
+        draw_enemy_proj(window, proj)
+
+def draw_enemy_proj(window, proj):
+    # Need to change
+    pygame.draw.circle(window, (255, 255, 255, 50), (proj.pos.x, proj.pos.y), proj.r)
+    pygame.draw.circle(window, (0, 0, 128, 50), (proj.pos.x, proj.pos.y), proj.r, 2)
+
+while not game.is_game_done():
     WINDOW.fill((128, 128, 128))
-    CLOCK.tick(60)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            exit()
-        elif event.type == pygame.KEYDOWN:
-            check_input(event.key, True)
-        elif event.type == pygame.KEYUP:
-            check_input(event.key, False)
-            
-    if (player_input["shoot"]):
-        player.shoot(player_input)
+            pygame.quit()
+            quit()
 
-    player.update_pos(player_input)
-    player.update_proj()
-    enemy.update_action(player.pos)
-    enemy.update_proj()
-    check_enemy_collisions()
-    check_player_collisions()
-    player.draw(WINDOW)
-    enemy.draw(WINDOW)
-    enemy_to_player_dist = enemy.pos.distance_to(player.pos)
-    if (enemy_to_player_dist < player.r + enemy.r):
-        is_player_touch_enemy = True
-        time_finish = pygame.time.get_ticks()
-        running = False
-    elif (enemy.health <= 0):
-        time_finish = pygame.time.get_ticks()
-        running = False
+    keys = pygame.key.get_pressed()
+    action = get_action_from_input(keys)
+
+    game.apply_step(action)
+    draw_player(WINDOW, game.player)
+    draw_enemy(WINDOW, game.enemy)
     pygame.display.update()
+    CLOCK.tick(60)
 
 pygame.quit()
 
-if is_player_touch_enemy:
+if game.is_player_touch_enemy:
     print("Player hit the enemy!")
 
-print(f"Bullets shot : {player.bullets_shot}")
+print(f"Bullets shot : {game.player.bullets_shot}")
 
-if player.bullets_shot == 0:
-    player.bullets_shot = 1
+if game.player.bullets_shot == 0:
+    game.player.bullets_shot = 1
 
-accuracy = player.player_bullets_hit/player.bullets_shot
+accuracy = game.player.player_bullets_hit/game.player.bullets_shot
 print(f"Accuracy : {accuracy:.2f}")
-print(f"Enemy bullets hit : {player.enemy_bullets_hit}")
-print(f"Time finished: {time_finish/1000} s")
+print(f"Enemy bullets hit : {game.player.enemy_bullets_hit}")
+print(f"Time finished: {game.time_finish/1000} s")
 
-if enemy.health > 0:
-    print(f"Enemy last health : {enemy.health}")
+if game.enemy.health > 0:
+    print(f"Enemy last health : {game.enemy.health}")
 else:
     print("Enemy defeated!")

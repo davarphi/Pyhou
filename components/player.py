@@ -39,14 +39,6 @@ class Player:
         elif (self.pos.y > self.bound_h - self.r): 
             self.pos.y = self.bound_h - self.r
     
-    # def draw(self, window):
-    #     # Need to change later
-    #     pygame.draw.circle(window, (128, 0, 0), (self.pos.x, self.pos.y), self.r)
-    #     pygame.draw.circle(window, (0, 0, 0), (self.pos.x, self.pos.y), self.r, 1)
-
-    #     for bullet in self.bullets:
-    #         bullet.draw(window)
-
     def shoot(self, is_slow):
         if (is_slow):
             attack_degs = [pi/2-radians(2), pi/2, pi/2+radians(2)]

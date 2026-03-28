@@ -19,7 +19,7 @@ DIRECTIONAL_VECTOR = {
 
 TIME_LIMIT = 18000
 
-class GameLogic:
+class Game:
     def __init__(self, attack_pat):
         self.attack_pat = attack_pat
         self.reset()
@@ -30,10 +30,12 @@ class GameLogic:
         self.tick = 0
         self.done = False
         self.is_player_touch_enemy = False
+        self.time_finish = 0
+
 
     def apply_step(self, action):
         vel_dir = DIRECTIONAL_VECTOR[action[0]]
-        self.player.vel = vel_dir
+        self.player.vel = Vector2(vel_dir)
         is_slow = action[1] == 1
         is_shoot = action[2] == 1
 
@@ -48,6 +50,8 @@ class GameLogic:
         self.check_player_collisions()
 
         self.tick += 1
+
+        return self.is_game_done()
 
     def is_game_done(self):
         enemy_to_player_dist = self.enemy.pos.distance_to(self.player.pos)

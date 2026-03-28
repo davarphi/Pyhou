@@ -18,11 +18,6 @@ class Projectile:
     def update(self):
         self.pos += self.vel
     
-    # def draw(self, window):
-    #     # Need to change
-    #     pygame.draw.circle(window, (128, 0, 0, 50), (self.pos.x, self.pos.y), self.r)
-    #     pygame.draw.circle(window, (0,0,0,50), (self.pos.x, self.pos.y), self.r, 1)
-
     def is_out_bound(self):
         return (self.pos.y < -self.r/2 or 
                 self.pos.y > self.bound_h + self.r/2 or 
