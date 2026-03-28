@@ -54,7 +54,6 @@ def draw_player(window, player):
         draw_player_proj(window, proj)
 
 def draw_player_proj(window, proj):
-    # Need to change
     pygame.draw.circle(window, (128, 0, 0, 50), (proj.pos.x, proj.pos.y), proj.r)
     pygame.draw.circle(window, (0,0,0,50), (proj.pos.x, proj.pos.y), proj.r, 1)
 
@@ -66,7 +65,6 @@ def draw_enemy(window, enemy):
         draw_enemy_proj(window, proj)
 
 def draw_enemy_proj(window, proj):
-    # Need to change
     pygame.draw.circle(window, (255, 255, 255, 50), (proj.pos.x, proj.pos.y), proj.r)
     pygame.draw.circle(window, (0, 0, 128, 50), (proj.pos.x, proj.pos.y), proj.r, 2)
 
@@ -98,9 +96,9 @@ if game.player.bullets_shot == 0:
     game.player.bullets_shot = 1
 
 accuracy = game.player.player_bullets_hit/game.player.bullets_shot
-print(f"Accuracy : {accuracy:.2f}")
+print(f"Accuracy : {accuracy:.3f}")
 print(f"Enemy bullets hit : {game.player.enemy_bullets_hit}")
-print(f"Time finished: {game.time_finish/1000} s")
+print(f"Time finished: {game.tick/60:2f} s")
 
 if game.enemy.health > 0:
     print(f"Enemy last health : {game.enemy.health}")
