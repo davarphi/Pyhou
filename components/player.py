@@ -22,11 +22,9 @@ class Player:
         self.enemy_bullets_hit = 0
         self.player_bullets_hit = 0
 
-    def update_pos(self, player_input):
-        self.vel.x = player_input["right"] - player_input["left"]
-        self.vel.y = player_input["down"] - player_input["up"] 
+    def update_pos(self, is_slow):
 
-        speed = self.BASE_SPEED if not(player_input["slow"]) else self.BASE_SPEED/3
+        speed = self.BASE_SPEED if not(is_slow) else self.BASE_SPEED/3
 
         if self.vel !=Vector2(0,0):
             self.pos += Vector2.normalize(self.vel)*speed
@@ -49,8 +47,8 @@ class Player:
     #     for bullet in self.bullets:
     #         bullet.draw(window)
 
-    def shoot(self, player_state):
-        if (player_state["slow"]):
+    def shoot(self, is_slow):
+        if (is_slow):
             attack_degs = [pi/2-radians(2), pi/2, pi/2+radians(2)]
             speed = 12
         else:
@@ -63,7 +61,7 @@ class Player:
                 self.bullets.append(bullet)
                 self.bullets_shot += 1
 
-            if (player_state["slow"]):
+            if (is_slow):
                 self.shot_cooldown = self.cooldown_time_slow
             else:
                 self.shot_cooldown = self.cooldown_time
