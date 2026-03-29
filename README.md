@@ -1,5 +1,14 @@
-Simulation thingy for final project.
+This is a simplification of Touhou or a bullet hell game in general for RL Learning
+This is still a WIP. Maybe an easy-to-use version will come.
 
-The original need JDK & Processing to run. 
+To use, just do the following:
+1. Install `uv`
+2. In the main file, run `uv pip install -r requirements.txt`
+3. TO run the game, run `uv run main.py`
 
-The Python Edition need pygames, just run main.py after installing the libraries at requirements. 
+Or if you only to use regular ol' `pip`, you can do so
+1. Make sure you have `pip`
+2. Activate the virtual environment by running `.\venv\Scripts\activate.bat`
+3. Run `pip install -r requirements.txt`
+4. Run `python run main.py` as usual
+
