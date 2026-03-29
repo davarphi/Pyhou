@@ -4,25 +4,16 @@ from gymnasium import spaces
 import pygame
 import numpy as np
 
-
-
-class Actions(Enum):
-    # Change this
-    right = 0
-    up = 1
-    left = 2
-    down = 3
-
-
 class PyhouEnv(gym.Env):
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 60}
 
     # Here
-    def __init__(self, render_mode=None, size=5):
+    def __init__(self, render_mode=None):
         # Pygame size
         self.WIDTH = 576
         self.HEIGHT = 672
 
+        self.game = None # Gameogic
         """ Take 1 : Reasonable Human Obs
         Player pos -> 2
         Enemy pos -> 2
@@ -39,8 +30,8 @@ class PyhouEnv(gym.Env):
         """
         v Haven't implemented rendering bruh
         """
-        # assert render_mode is None or render_mode in self.metadata["render_modes"]
-        # self.render_mode = render_mode
+        assert render_mode is None or render_mode in self.metadata["render_modes"]
+        self.render_mode = render_mode
 
         """
         If human-rendering is used, `self.window` will be a reference
@@ -53,14 +44,12 @@ class PyhouEnv(gym.Env):
         self.clock = None
 
     def _get_obs(self):
-        return {"agent": self._agent_location, "target": self._target_location}
+        pass
+        # Return the 44-vector array of the observation
 
     def _get_info(self):
-        return {
-            "distance": np.linalg.norm(
-                self._agent_location - self._target_location, ord=1
-            )
-        }
+        return {}
+        # Should be the endgame stats
 
     def reset(self, seed=None, options=None):
         # We need the following line to seed self.np_random
