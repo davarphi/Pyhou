@@ -2,7 +2,7 @@ import pygame
 from components.player import Player
 from components.enemy import Enemy
 from components.constants import *
-from game_logic import Game
+from components.game_logic import Game
 import argparse
 
 

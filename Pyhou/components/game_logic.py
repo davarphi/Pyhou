@@ -1,6 +1,6 @@
-from components.player import Player
-from components.enemy import Enemy
-from components.constants import *
+from .player import Player
+from .enemy import Enemy
+from .constants import *
 from pygame.math import Vector2
 
 

@@ -11,3 +11,7 @@ ENV/
 env.bak/
 venv.bak/
 .vscode
+build/
+dist/
+*.egg-info/
+RL_Test/

@@ -3,6 +3,7 @@ import gymnasium as gym
 from gymnasium import spaces
 import pygame
 import numpy as np
+from components.game_logic import Game
 
 class PyhouEnv(gym.Env):
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 60}
@@ -13,7 +14,7 @@ class PyhouEnv(gym.Env):
         self.WIDTH = 576
         self.HEIGHT = 672
 
-        self.game = None # Gameogic
+        self.game = None
         """ Take 1 : Reasonable Human Obs
         Player pos -> 2
         Enemy pos -> 2
@@ -163,3 +164,6 @@ class PyhouEnv(gym.Env):
         if self.window is not None:
             pygame.display.quit()
             pygame.quit()
+
+if __name__ == "__main__":
+    print("Success")
