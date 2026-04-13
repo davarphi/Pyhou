@@ -88,7 +88,7 @@ while not game.is_game_done():
 pygame.quit()
 
 if game.is_player_touch_enemy:
-    print("Player hit the enemy!")
+    print("Player touched the enemy!")
 
 print(f"Bullets shot : {game.player.bullets_shot}")
 

@@ -3,7 +3,9 @@ import gymnasium as gym
 from gymnasium import spaces
 import pygame
 import numpy as np
+from pygame.math import Vector2
 from components.game_logic import Game
+from pathlib import Path
 
 class PyhouEnv(gym.Env):
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 60}
@@ -14,14 +16,16 @@ class PyhouEnv(gym.Env):
         self.WIDTH = 576
         self.HEIGHT = 672
 
-        self.game = None
+        json_path = Path(__file__).parent.parent / "attacks"/ "test_attack.json"
+        self.game = Game(str(json_path))
+        # self.game = Game("test_attack.json")
         """ Take 1 : Reasonable Human Obs
         Player pos -> 2
         Enemy pos -> 2
-        Enemy proj : Take 10 nearest for now, take pos (2) and vel (2) -> 4*10 = 40 
-        
+        Enemy proj : Take 10 nearest for now, take pos (2) and dir vel (2) and speed -> 5*10 = 50 
+        Total = 54
         """
-        self.observation_space = spaces.Box(low=-1, high=1, shape=(44,), dtype=np.float32)
+        self.observation_space = spaces.Box(low=-1, high=1, shape=(54,), dtype=np.float32)
         # ^ I really don't know what to put...
 
         # We have 9 x 2 x 2 actions, corresponding to the 8 cardinal directions + 1 stay, Binary slow mode, Binary shoot
@@ -44,28 +48,47 @@ class PyhouEnv(gym.Env):
         self.window = None
         self.clock = None
 
+    
     def _get_obs(self):
-        pass
-        # Return the 44-vector array of the observation
+        # -1 is better value for missing values though
+        obs = np.zeros(54)
+
+        obs[0] = self.game.player.pos.x / self.WIDTH # Player rel x pos
+        obs[1] = self.game.player.pos.y / self.HEIGHT # Player rel y pos
+        obs[2] = self.game.enemy.pos.x / self.WIDTH # Enemy rel x pos
+        obs[3] = self.game.enemy.pos.y / self.HEIGHT # Enemy rel y pos
+
+        proj_list = self.game.enemy.bullets
+        nearest = sorted(proj_list, key=lambda p : ((p.pos.x - self.game.player.pos.x)**2 + (p.pos.y - self.game.player.pos.y)**2))[:10]
+
+        for i, p in enumerate(nearest):
+            obs[5*i + 4] = p.pos.x / self.WIDTH
+            obs[5*i + 5] = p.pos.y / self.HEIGHT 
+            obs[5*i + 6] = p.vel.x / p.speed
+            obs[5*i + 7] = p.vel.y / p.speed
+            obs[5*i + 8] = np.tanh(min(p.speed / 25, 50)) # 25 is kinda mid-ish
+
+        return obs 
+        # Return the 54-vector array of the observation
 
     def _get_info(self):
-        return {}
+        health = self.game.enemy.health
+        bullets_shot = self.game.player.bullets_shot
+        player_got_hit_count  = self.game.player.enemy_bullets_hit
+        enemy_got_hit_count = self.game.player.player_bullets_hit
+
+        return {"Enemy_health" : health, 
+                "Bullets_shot" : bullets_shot,
+                "#Bullets_that_hit_player" : player_got_hit_count,
+                "Bullets_that_hit_enemy" : enemy_got_hit_count}
+        # This is for now
         # Should be the endgame stats
 
     def reset(self, seed=None, options=None):
         # We need the following line to seed self.np_random
         super().reset(seed=seed)
 
-        # Choose the agent's location uniformly at random
-        self._agent_location = self.np_random.integers(0, self.size, size=2, dtype=int)
-
-        # We will sample the target's location randomly until it does not
-        # coincide with the agent's location
-        self._target_location = self._agent_location
-        while np.array_equal(self._target_location, self._agent_location):
-            self._target_location = self.np_random.integers(
-                0, self.size, size=2, dtype=int
-            )
+        self.game.reset()
 
         observation = self._get_obs()
         info = self._get_info()
@@ -76,22 +99,18 @@ class PyhouEnv(gym.Env):
         return observation, info
 
     def step(self, action):
-        # Map the action (element of {0,1,2,3}) to the direction we walk in
-        direction = self._action_to_direction[action]
-        # We use `np.clip` to make sure we don't leave the grid
-        self._agent_location = np.clip(
-            self._agent_location + direction, 0, self.size - 1
-        )
-        # An episode is done iff the agent has reached the target
-        terminated = np.array_equal(self._agent_location, self._target_location)
-        reward = 1 if terminated else 0  # Binary sparse rewards
+        self.game.apply_step(action)
+        terminated = self.game.is_terminated()
+        truncated = self.game.is_truncated()
+        reward = 0 # BRUH...... Gmn ya....
         observation = self._get_obs()
         info = self._get_info()
 
         if self.render_mode == "human":
             self._render_frame()
 
-        return observation, reward, terminated, False, info
+        return observation, reward, terminated, truncated, info
+        # TInggal reward signal
 
     def render(self):
         if self.render_mode == "rgb_array":
@@ -106,44 +125,9 @@ class PyhouEnv(gym.Env):
             self.clock = pygame.time.Clock()
 
         canvas = pygame.Surface((self.window_size, self.window_size))
-        canvas.fill((255, 255, 255))
-        pix_square_size = (
-            self.window_size / self.size
-        )  # The size of a single grid square in pixels
+        canvas.fill((128, 128, 128))
 
-        # First we draw the target
-        pygame.draw.rect(
-            canvas,
-            (255, 0, 0),
-            pygame.Rect(
-                pix_square_size * self._target_location,
-                (pix_square_size, pix_square_size),
-            ),
-        )
-        # Now we draw the agent
-        pygame.draw.circle(
-            canvas,
-            (0, 0, 255),
-            (self._agent_location + 0.5) * pix_square_size,
-            pix_square_size / 3,
-        )
-
-        # Finally, add some gridlines
-        for x in range(self.size + 1):
-            pygame.draw.line(
-                canvas,
-                0,
-                (0, pix_square_size * x),
-                (self.window_size, pix_square_size * x),
-                width=3,
-            )
-            pygame.draw.line(
-                canvas,
-                0,
-                (pix_square_size * x, 0),
-                (pix_square_size * x, self.window_size),
-                width=3,
-            )
+        # Draw the stuff here
 
         if self.render_mode == "human":
             # The following line copies our drawings from `canvas` to the visible window

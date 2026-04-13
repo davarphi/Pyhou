@@ -1,1 +1,1 @@
-from pyhou_gym_env.envs.pyhou import PyhouEnv
+from pyhou_gym_env.envs.pyhou_gym import PyhouEnv

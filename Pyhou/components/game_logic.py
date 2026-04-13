@@ -20,6 +20,8 @@ TIME_LIMIT = 18000
 
 class Game:
     def __init__(self, attack_pat):
+        self.width = WIDTH
+        self.height = HEIGHT
         self.attack_pat = attack_pat
         self.reset()
         
@@ -51,12 +53,21 @@ class Game:
         self.tick += 1
 
     def is_game_done(self):
-        enemy_to_player_dist = self.enemy.pos.distance_to(self.player.pos)
         return (
-            self.tick >= TIME_LIMIT or
+            self.is_terminated() or
+            self.is_truncated()
+        )
+    
+    def is_terminated(self):
+        enemy_to_player_dist = self.enemy.pos.distance_to(self.player.pos)
+        return (            
             enemy_to_player_dist < self.player.r + self.enemy.r or
             self.enemy.health <= 0
         )
+    
+    def is_truncated(self):
+        return (self.tick >= TIME_LIMIT)
+
 
     def check_player_collisions(self):
         for bullet in self.enemy.bullets[:]:
