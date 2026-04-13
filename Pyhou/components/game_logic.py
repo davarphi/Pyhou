@@ -59,15 +59,20 @@ class Game:
         )
     
     def is_terminated(self):
-        enemy_to_player_dist = self.enemy.pos.distance_to(self.player.pos)
-        return (            
-            enemy_to_player_dist < self.player.r + self.enemy.r or
-            self.enemy.health <= 0
+        return (
+            self.is_win() or
+            self.is_loss()
         )
     
+    def is_win(self):
+        return self.enemy.health <= 0
+    
+    def is_loss(self):
+        enemy_to_player_dist = self.enemy.pos.distance_to(self.player.pos)
+        return enemy_to_player_dist < self.player.r + self.enemy.r
+
     def is_truncated(self):
         return (self.tick >= TIME_LIMIT)
-
 
     def check_player_collisions(self):
         for bullet in self.enemy.bullets[:]:

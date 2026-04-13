@@ -99,10 +99,29 @@ class PyhouEnv(gym.Env):
         return observation, info
 
     def step(self, action):
+        prev_player_bullets_hit = self.game.player.player_bullets_hit
+        prev_enemy_bullets_hit = self.game.player.enemy_bullets_hit
         self.game.apply_step(action)
         terminated = self.game.is_terminated()
         truncated = self.game.is_truncated()
-        reward = 0 # BRUH...... Gmn ya....
+        reward = 0 
+
+        reward -= 0.0015 # PER STEP
+
+        enemy_hits = self.game.player.player_bullets_hit - prev_player_bullets_hit
+        player_hits = self.game.player.enemy_bullets_hit - prev_enemy_bullets_hit
+
+        reward += enemy_hits * 1
+        reward -= player_hits * 0.5
+
+
+        if self.game.is_win():
+            reward += 100
+
+        elif self.game.is_lose():
+            reward -= 150
+
+        
         observation = self._get_obs()
         info = self._get_info()
 

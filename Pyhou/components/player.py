@@ -19,8 +19,8 @@ class Player:
         self.shot_cooldown = 0
 
         self.bullets_shot = 0
-        self.enemy_bullets_hit = 0
-        self.player_bullets_hit = 0
+        self.enemy_bullets_hit = 0 # A bullet hit player
+        self.player_bullets_hit = 0 # A bullet hit enemy
 
     def update_pos(self, is_slow):
 
@@ -51,7 +51,9 @@ class Player:
             for angle in attack_degs:
                 bullet = Projectile(self.pos.x, self.pos.y + self.r // 2, angle, speed)
                 self.bullets.append(bullet)
-                self.bullets_shot += 1
+                # self.bullets_shot += 1 <- Per bullet but for research purpose, probably not good
+            
+            self.bullets_shot += 1
 
             if (is_slow):
                 self.shot_cooldown = self.cooldown_time_slow
