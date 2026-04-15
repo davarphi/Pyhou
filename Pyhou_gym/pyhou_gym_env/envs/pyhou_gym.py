@@ -99,6 +99,14 @@ class PyhouEnv(gym.Env):
         return observation, info
 
     def step(self, action):
+        """
+        Alpha stage rewards : 
+        -0.0015 (30/18000) per step penalty. (chaneg is TIME_LIMIT is changed)
+        +1 per enemy_hits
+        -0.5 per player_hits
+        +100 per win
+        -150 per loss
+        """
         prev_player_bullets_hit = self.game.player.player_bullets_hit
         prev_enemy_bullets_hit = self.game.player.enemy_bullets_hit
         self.game.apply_step(action)
@@ -121,7 +129,6 @@ class PyhouEnv(gym.Env):
         elif self.game.is_lose():
             reward -= 150
 
-        
         observation = self._get_obs()
         info = self._get_info()
 
@@ -129,8 +136,7 @@ class PyhouEnv(gym.Env):
             self._render_frame()
 
         return observation, reward, terminated, truncated, info
-        # TInggal reward signal
-
+    
     def render(self):
         if self.render_mode == "rgb_array":
             return self._render_frame()
@@ -147,6 +153,21 @@ class PyhouEnv(gym.Env):
         canvas.fill((128, 128, 128))
 
         # Draw the stuff here
+        player = self.game.player
+        enemy = self.game.enemy
+        pygame.draw.circle(self.window, (128, 0, 0), (player.pos.x, player.pos.y), player.r)
+        pygame.draw.circle(self.window, (0, 0, 0), (self.player.pos.x, player.pos.y), player.r, 1)
+
+        for proj in player.bullets:
+            pygame.draw.circle(self.window, (128, 0, 0, 50), (proj.pos.x, proj.pos.y), proj.r)
+            pygame.draw.circle(self.window, (0,0,0,50), (proj.pos.x, proj.pos.y), proj.r, 1)
+
+            pygame.draw.circle(self.window, (0, 128, 128), (enemy.pos.x, enemy.pos.y), enemy.r)
+            pygame.draw.circle(self.window, (0, 0, 0), (enemy.pos.x, enemy.pos.y), enemy.r, 1) 
+
+        for proj in enemy.bullets:
+            pygame.draw.circle(self.window, (255, 255, 255, 50), (proj.pos.x, proj.pos.y), proj.r)
+            pygame.draw.circle(self.window, (0, 0, 128, 50), (proj.pos.x, proj.pos.y), proj.r, 2)
 
         if self.render_mode == "human":
             # The following line copies our drawings from `canvas` to the visible window
