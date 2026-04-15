@@ -16,7 +16,7 @@ class PyhouEnv(gym.Env):
         self.WIDTH = 576
         self.HEIGHT = 672
 
-        json_path = Path(__file__).parent.parent / "attacks"/ "test_attack.json"
+        json_path = Path(__file__).parent.parent.parent / "attacks"/ "test_attack.json"
         self.game = Game(str(json_path))
         # self.game = Game("test_attack.json")
         """ Take 1 : Reasonable Human Obs
@@ -51,7 +51,7 @@ class PyhouEnv(gym.Env):
     
     def _get_obs(self):
         # -1 is better value for missing values though
-        obs = np.zeros(54)
+        obs = np.zeros(54, dtype=np.float32)
 
         obs[0] = self.game.player.pos.x / self.WIDTH # Player rel x pos
         obs[1] = self.game.player.pos.y / self.HEIGHT # Player rel y pos
@@ -111,7 +111,7 @@ class PyhouEnv(gym.Env):
         prev_enemy_bullets_hit = self.game.player.enemy_bullets_hit
         self.game.apply_step(action)
         terminated = self.game.is_terminated()
-        truncated = self.game.is_truncated()
+        truncated = self.game.is_truncated() # Replace this to False to use the built-in TimeLimit wrapper
         reward = 0 
 
         reward -= 0.0015 # PER STEP
@@ -126,7 +126,7 @@ class PyhouEnv(gym.Env):
         if self.game.is_win():
             reward += 100
 
-        elif self.game.is_lose():
+        elif self.game.is_loss():
             reward -= 150
 
         observation = self._get_obs()
@@ -140,6 +140,8 @@ class PyhouEnv(gym.Env):
     def render(self):
         if self.render_mode == "rgb_array":
             return self._render_frame()
+        elif self.render_mode == "human":
+            self._render_frame()
 
     def _render_frame(self):
         if self.window is None and self.render_mode == "human":
@@ -155,19 +157,16 @@ class PyhouEnv(gym.Env):
         # Draw the stuff here
         player = self.game.player
         enemy = self.game.enemy
-        pygame.draw.circle(self.window, (128, 0, 0), (player.pos.x, player.pos.y), player.r)
-        pygame.draw.circle(self.window, (0, 0, 0), (self.player.pos.x, player.pos.y), player.r, 1)
+        pygame.draw.circle(canvas, (128, 0, 0), (player.pos.x, player.pos.y), player.r)
+        pygame.draw.circle(canvas, (0, 0, 0), (player.pos.x, player.pos.y), player.r, 1)
 
         for proj in player.bullets:
-            pygame.draw.circle(self.window, (128, 0, 0, 50), (proj.pos.x, proj.pos.y), proj.r)
-            pygame.draw.circle(self.window, (0,0,0,50), (proj.pos.x, proj.pos.y), proj.r, 1)
-
-            pygame.draw.circle(self.window, (0, 128, 128), (enemy.pos.x, enemy.pos.y), enemy.r)
-            pygame.draw.circle(self.window, (0, 0, 0), (enemy.pos.x, enemy.pos.y), enemy.r, 1) 
+            pygame.draw.circle(canvas, (128, 0, 0, 50), (proj.pos.x, proj.pos.y), proj.r)
+            pygame.draw.circle(canvas, (0,0,0,50), (proj.pos.x, proj.pos.y), proj.r, 1)
 
         for proj in enemy.bullets:
-            pygame.draw.circle(self.window, (255, 255, 255, 50), (proj.pos.x, proj.pos.y), proj.r)
-            pygame.draw.circle(self.window, (0, 0, 128, 50), (proj.pos.x, proj.pos.y), proj.r, 2)
+            pygame.draw.circle(canvas, (255, 255, 255, 50), (proj.pos.x, proj.pos.y), proj.r)
+            pygame.draw.circle(canvas, (0, 0, 128, 50), (proj.pos.x, proj.pos.y), proj.r, 2)
 
         if self.render_mode == "human":
             # The following line copies our drawings from `canvas` to the visible window
