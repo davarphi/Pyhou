@@ -16,7 +16,7 @@ class PyhouEnv(gym.Env):
         self.WIDTH = 576
         self.HEIGHT = 672
 
-        json_path = Path(__file__).parent.parent.parent / "attacks"/ "test_attack.json"
+        json_path = Path(__file__).parent.parent.parent / "attacks"/ "test_attack.json" # Ini nanti ganti
         self.game = Game(str(json_path))
         # self.game = Game("test_attack.json")
         """ Take 1 : Reasonable Human Obs
