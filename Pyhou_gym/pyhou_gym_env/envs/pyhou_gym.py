@@ -119,7 +119,7 @@ class PyhouEnv(gym.Env):
         enemy_hits = self.game.player.player_bullets_hit - prev_player_bullets_hit
         player_hits = self.game.player.enemy_bullets_hit - prev_enemy_bullets_hit
 
-        reward += enemy_hits * 1
+        reward += enemy_hits * 3
         reward -= player_hits * 0.5
 
 
@@ -147,18 +147,18 @@ class PyhouEnv(gym.Env):
         if self.window is None and self.render_mode == "human":
             pygame.init()
             pygame.display.init()
-            self.window = pygame.display.set_mode((self.window_size, self.window_size))
+            self.window = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
         if self.clock is None and self.render_mode == "human":
             self.clock = pygame.time.Clock()
 
-        canvas = pygame.Surface((self.window_size, self.window_size))
+        canvas = pygame.Surface((self.WIDTH, self.HEIGHT))
         canvas.fill((128, 128, 128))
 
         # Draw the stuff here
         player = self.game.player
         enemy = self.game.enemy
-        pygame.draw.circle(canvas, (128, 0, 0), (player.pos.x, player.pos.y), player.r)
-        pygame.draw.circle(canvas, (0, 0, 0), (player.pos.x, player.pos.y), player.r, 1)
+        pygame.draw.circle(canvas, (0, 0, 128), (player.pos.x, player.pos.y), player.r)
+        pygame.draw.circle(canvas, (128, 0, 0), (enemy.pos.x, enemy.pos.y), enemy.r, 1)
 
         for proj in player.bullets:
             pygame.draw.circle(canvas, (128, 0, 0, 50), (proj.pos.x, proj.pos.y), proj.r)
