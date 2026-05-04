@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 packages = ["pyhou_gym_env"]
 
 [tool.uv.sources]
-pyhou = { path = "../Pyhou" }
+pyhou = { path = "../Pyhou", editable = true}
 
 [project]
 name = "pyhou_gym_env"

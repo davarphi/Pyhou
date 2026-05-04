@@ -80,7 +80,7 @@ class PyhouEnv(gym.Env):
 
         return {"Enemy_health" : health, 
                 "Bullets_shot" : bullets_shot,
-                "#Bullets_that_hit_player" : player_got_hit_count,
+                "Bullets_that_hit_player" : player_got_hit_count,
                 "Bullets_that_hit_enemy" : enemy_got_hit_count}
         # This is for now
         # Should be the endgame stats

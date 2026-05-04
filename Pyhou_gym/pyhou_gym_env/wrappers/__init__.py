@@ -4,3 +4,4 @@ from pyhou_gym_env.wrappers.reacher_weighted_reward import ReacherRewardWrapper
 from pyhou_gym_env.wrappers.relative_position import RelativePosition
 
 from pyhou_gym_env.wrappers.frameskip import FrameSkip
+from pyhou_gym_env.wrappers.info_callback import InfoCallback
