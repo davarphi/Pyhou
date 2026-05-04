@@ -29,7 +29,6 @@ class Enemy:
     def take_damage(self):
         if self.health > 0:
             self.health -= DAMAGE
-        print(self.health) # Remove this later
 
     def start_action(self):
         self.current_action = Action(self.actions_data)
