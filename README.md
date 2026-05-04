@@ -12,3 +12,10 @@ Or if you only to use regular ol' `pip`, you can do so
 3. Run `pip install -r requirements.txt`
 4. Run `python run main.py` as usual
 
+
+To train : 
+uv run train.py
+
+TO test : 
+uv run test.py
+

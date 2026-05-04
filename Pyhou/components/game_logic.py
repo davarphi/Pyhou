@@ -16,7 +16,7 @@ DIRECTIONAL_VECTOR = {
     8: (1, -1)
 }
 
-TIME_LIMIT = 18000
+TIME_LIMIT = 2400
 
 class Game:
     def __init__(self, attack_pat):

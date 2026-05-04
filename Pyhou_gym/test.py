@@ -4,14 +4,15 @@ from stable_baselines3 import PPO
 
 env = PyhouEnv(render_mode="human")
 model = PPO.load('pyhou', env=env)
-print(env.render_mode)
+
 obs, info = env.reset()
 for i in range(1200):
-    action, _state = model.predict(obs, deterministic=True)
+    action, _state = model.predict(obs)
     obs, reward, terminated, truncated, info = env.step(action)
     env.render()
     if terminated or truncated:
         obs, info = env.reset()
+        break
     # VecEnv resets automatically
     # if done:
     #   obs = vec_env.reset()

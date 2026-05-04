@@ -11,10 +11,11 @@ class PyhouEnv(gym.Env):
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 60}
 
     # Here
-    def __init__(self, render_mode=None):
+    def __init__(self, render_mode=None, reward_dict={}):
         # Pygame size
         self.WIDTH = 576
         self.HEIGHT = 672
+        self.reward = reward_dict
 
         json_path = Path(__file__).parent.parent.parent / "attacks"/ "test_attack.json" # Ini nanti ganti
         self.game = Game(str(json_path))
@@ -114,20 +115,20 @@ class PyhouEnv(gym.Env):
         truncated = self.game.is_truncated() # Replace this to False to use the built-in TimeLimit wrapper
         reward = 0 
 
-        reward -= 0.0015 # PER STEP
+        reward += self.reward.get("time_penalty", -0.001)
 
         enemy_hits = self.game.player.player_bullets_hit - prev_player_bullets_hit
         player_hits = self.game.player.enemy_bullets_hit - prev_enemy_bullets_hit
 
-        reward += enemy_hits * 3
-        reward -= player_hits * 0.5
+        reward += enemy_hits * self.reward.get("enemy_hit", 1)
+        reward += player_hits * self.reward.get("player_hit", -0.5)
 
 
         if self.game.is_win():
-            reward += 100
+            reward += self.reward.get("win", 100)
 
         elif self.game.is_loss():
-            reward -= 150
+            reward += self.reward.get("loss", 150)
 
         observation = self._get_obs()
         info = self._get_info()
@@ -158,7 +159,8 @@ class PyhouEnv(gym.Env):
         player = self.game.player
         enemy = self.game.enemy
         pygame.draw.circle(canvas, (0, 0, 128), (player.pos.x, player.pos.y), player.r)
-        pygame.draw.circle(canvas, (128, 0, 0), (enemy.pos.x, enemy.pos.y), enemy.r, 1)
+        pygame.draw.circle(canvas, (128, 0, 0), (enemy.pos.x, enemy.pos.y), enemy.r)
+        pygame.draw.circle(canvas, (0, 0, 0), (enemy.pos.x, enemy.pos.y), enemy.r, 1)
 
         for proj in player.bullets:
             pygame.draw.circle(canvas, (128, 0, 0, 50), (proj.pos.x, proj.pos.y), proj.r)

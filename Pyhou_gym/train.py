@@ -1,11 +1,32 @@
 import gymnasium as gym
 from pyhou_gym_env.envs.pyhou_gym import PyhouEnv
+from pyhou_gym_env.wrappers import FrameSkip
+import time
 
 from stable_baselines3 import PPO
 
-env = PyhouEnv()
+reward = {
+    "time_penalty": -0.0015,
+    "enemy_hit": 2,
+    "player_hit": -4,
+    "win":100,
+    "loss":-150
+}
+
+def print_training_stat(reward_dict):
+    print("Stats : ")
+    for key, value in reward_dict.items():
+        print(f"{key} : {value}")
+
+    time.sleep(1)
+
+env = FrameSkip(PyhouEnv(reward_dict=reward), skip=45)
 
 model = PPO("MlpPolicy", env, verbose=1)
-model.learn(total_timesteps=100)
+print("Model training begin")
+print_training_stat(reward)
+model.learn(total_timesteps=6000)
+print("Training finished")
 
 model.save("pyhou")
+print("Model saved to pyhou.zip")
