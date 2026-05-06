@@ -6,9 +6,9 @@ import time
 from stable_baselines3 import PPO
 
 reward = {
-    "time_penalty": -0.0002,
+    "time_penalty": -0.0001,
     "enemy_hit": 2,
-    "player_hit": -2,
+    "player_hit": -1,
     "win":100,
     "loss":-200
 }
@@ -25,7 +25,7 @@ env = FrameSkip(PyhouEnv(reward_dict=reward), skip=60)
 model = PPO("MlpPolicy", env, verbose=1)
 print("Model training begin")
 print_training_stat(reward)
-model.learn(total_timesteps=10000, callback=InfoCallback())
+model.learn(total_timesteps=1000000, callback=InfoCallback())
 print("Training finished")
 
 model.save("pyhou")

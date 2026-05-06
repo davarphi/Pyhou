@@ -1,8 +1,9 @@
 import gymnasium as gym
 from pyhou_gym_env.envs.pyhou_gym import PyhouEnv
+from pyhou_gym_env.wrappers import FrameSkip, InfoCallback
 from stable_baselines3 import PPO
 
-env = PyhouEnv(render_mode="human")
+env =   FrameSkip(PyhouEnv(render_mode="human"), skip=30)
 model = PPO.load('pyhou', env=env)
 
 obs, info = env.reset()
