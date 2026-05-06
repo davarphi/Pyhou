@@ -28,6 +28,8 @@ class Game:
     def reset(self):
         self.player = Player(WIDTH//2, HEIGHT//2)
         self.enemy = Enemy(WIDTH/2, 40, self.attack_pat)
+        self.enemy.health = 100.0
+        print("ENEMY IS 100.0")
         self.tick = 0
         self.done = False
         self.is_player_touch_enemy = False
