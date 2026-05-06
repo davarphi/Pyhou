@@ -120,6 +120,9 @@ class PyhouEnv(gym.Env):
         enemy_hits = self.game.player.player_bullets_hit - prev_player_bullets_hit
         player_hits = self.game.player.enemy_bullets_hit - prev_enemy_bullets_hit
 
+        if (np.abs(self.game.player.pos.x - self.game.enemy.pos.x) / self.game.player.pos.distance_to(self.game.enemy.pos) <= np.sin(np.deg2rad(2))):
+            reward += self.reward.get("aligned_pos", 0)
+
         reward += enemy_hits * self.reward.get("enemy_hit", 1)
         reward += player_hits * self.reward.get("player_hit", -0.5)
 

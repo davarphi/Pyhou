@@ -16,7 +16,7 @@ DIRECTIONAL_VECTOR = {
     8: (1, -1)
 }
 
-TIME_LIMIT = 2400
+TIME_LIMIT = 7200
 
 class Game:
     def __init__(self, attack_pat):
@@ -28,6 +28,7 @@ class Game:
     def reset(self):
         self.player = Player(WIDTH//2, HEIGHT//2)
         self.enemy = Enemy(WIDTH/2, 40, self.attack_pat)
+        print("Enemy health reset")
         self.tick = 0
         self.done = False
         self.is_player_touch_enemy = False
