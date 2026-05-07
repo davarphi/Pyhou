@@ -3,7 +3,7 @@ from pyhou_gym_env.envs.pyhou_gym import PyhouEnv
 from pyhou_gym_env.wrappers import FrameSkip, InfoCallback
 from stable_baselines3 import PPO
 
-env = FrameSkip(PyhouEnv(render_mode="human"), skip=60)
+env = FrameSkip(PyhouEnv(render_mode="human"), skip=10)
 model = PPO.load('pyhou', env=env)
 
 obs, info = env.reset()
