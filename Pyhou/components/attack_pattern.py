@@ -72,13 +72,13 @@ def get_ring_random_pattern_bullets(cnt1, cnt2, ang1, ang2, spe1, spe2, pos=Vect
 
     return new_projectile
 
-def get_meek_random_pattern_bullets(cnt1, cnt2, ang1, ang2, spe1, spe2, pos=Vector2(0,0)):
+def get_meek_random_pattern_bullets(cnt1, cnt2, ang1, ang2, spe1, spe2, pos=Vector2(0,0), rel_with=0):
     new_projectile = []
     for i in range(cnt2):
         for j in range(cnt1):
             speed = round(spe1 + random()*spe2, 3)
             random_offset = -ang2 + round(random()*2*ang2, 3)
-            angle = ang1 + random_offset
+            angle = -90 + rel_with - ang1 + random_offset
             bullet = EnemyProjectile(pos.x, pos.y, radians(angle), speed)
             new_projectile.append(bullet)
 
