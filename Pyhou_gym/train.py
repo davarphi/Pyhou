@@ -6,12 +6,12 @@ import time
 from stable_baselines3 import PPO
 
 reward = {
-    "time_penalty": -0.0001,
+    "time_penalty": -0.001,
     "enemy_hit": 8,
     "player_hit": -12,
     "aligned_pos": 2,
-    "win":150,
-    "loss":-200
+    "win":300,
+    "loss":-150
 }
 
 def print_training_stat(reward_dict):
