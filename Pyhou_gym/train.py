@@ -7,10 +7,10 @@ from stable_baselines3 import PPO
 
 reward = {
     "time_penalty": -0.01,
-    "enemy_hit": 8,
-    "player_hit": -12,
-    "aligned_pos": 4,
-    "win":50,
+    "enemy_hit": 10,
+    "player_hit": -30,
+    "aligned_pos": 6,
+    "win":100,
     "loss":-200
 }
 

@@ -72,7 +72,7 @@ class Enemy:
             case "ring_random":
                 new_projectile = get_ring_random_pattern_bullets(cnt1, cnt2, ang1, ang2, spe1, spe2, self.pos)
             case "meek_random":
-                new_projectile = get_meek_random_pattern_bullets(cnt1, cnt2, ang1, ang2, spe1, spe2, self.pos)
+                new_projectile = get_meek_random_pattern_bullets(cnt1, cnt2, ang1, ang2, spe1, spe2, self.pos, player_angle)
 
                 
         return new_projectile
