@@ -5,7 +5,7 @@ from stable_baselines3 import PPO
 import time
 
 env = FrameSkip(PyhouEnv(render_mode="human"), skip=10)
-model = PPO.load('best', env=env)
+model = PPO.load('best2', env=env)
 
 obs, info = env.reset()
 

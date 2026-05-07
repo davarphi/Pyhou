@@ -24,3 +24,4 @@ best for now : reward = {
     "loss":-200
 }
 Test can be done optimally humanly by just going to the bottom and strafe
+best2 is kinda weird lol
