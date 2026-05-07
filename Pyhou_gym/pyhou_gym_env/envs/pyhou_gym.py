@@ -90,7 +90,6 @@ class PyhouEnv(gym.Env):
         super().reset(seed=seed)
 
         self.game.reset()
-
         observation = self._get_obs()
         info = self._get_info()
 

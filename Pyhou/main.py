@@ -4,6 +4,7 @@ from components.enemy import Enemy
 from components.constants import *
 from components.game_logic import Game
 import argparse
+import time 
 
 
 parser = argparse.ArgumentParser(description="Pyhou")
@@ -84,7 +85,6 @@ while not game.is_game_done():
     draw_enemy(WINDOW, game.enemy)
     pygame.display.update()
     CLOCK.tick(60)
-
 pygame.quit()
 
 if game.is_player_touch_enemy:
