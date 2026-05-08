@@ -15,13 +15,20 @@ To train the game and see some RL stuff
 
 There's this weird error from Stable Baselines 3 that requires you to have MSVC. YOu should install them if you got error mentioning DLL.
 
-best for now : reward = {
+Best for now : reward = {
     "time_penalty": -0.01,
     "enemy_hit": 8,
     "player_hit": -32,
     "aligned_pos": 4,
     "win":50,
     "loss":-200
-}
+}, frame_skip 10, train > 100000
+
+Stats : 
+
+Health : 0.0
+Bullets that hit player : 8
+Bullets that hit enemy : 100
+Time : 24.284
+
 Test can be done optimally humanly by just going to the bottom and strafe
-best2 is kinda weird lol

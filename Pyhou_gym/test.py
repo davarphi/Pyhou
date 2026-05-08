@@ -7,7 +7,7 @@ import argparse
 
 parser = argparse.ArgumentParser(description="Testing a trained model")
 parser.add_argument("--pattern", type=str, default="test_attack.json", help="Attack pattern to use")
-parser.add_argument("--model", type=str, default="best", help="Attack pattern to use")
+parser.add_argument("--model", type=str, default="pyhou", help="Model to use")
 args = parser.parse_args()
 
 env = FrameSkip(PyhouEnv(render_mode="human", pattern=args.pattern), skip=10)
@@ -24,8 +24,8 @@ def print_stat():
 
     print(f"Health : {health}")
     print(f"Bullets shot : {bullets_shot}")
-    print(f"Bullets that hit enemy : {enemy_get_hit_count}")
     print(f"Bullets that hit player : {player_get_hit_count}")
+    print(f"Bullets that hit enemy : {enemy_get_hit_count}")
     print(f"Time : {time_taken}")
 
 start = time.time()
