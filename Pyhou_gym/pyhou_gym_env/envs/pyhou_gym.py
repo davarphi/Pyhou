@@ -11,13 +11,13 @@ class PyhouEnv(gym.Env):
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 60}
 
     # Here
-    def __init__(self, render_mode=None, reward_dict={}):
+    def __init__(self, render_mode=None, reward_dict={}, pattern="test_attack.json"):
         # Pygame size
         self.WIDTH = 576
         self.HEIGHT = 672
         self.reward = reward_dict
 
-        json_path = Path(__file__).parent.parent.parent / "attacks"/ "hard.json" # Ini nanti ganti
+        json_path = Path(__file__).parent.parent.parent / "attacks"/ pattern # Ini nanti ganti
         self.game = Game(str(json_path))
         # self.game = Game("test_attack.json")
         """ Take 1 : Reasonable Human Obs

@@ -3,9 +3,15 @@ from pyhou_gym_env.envs.pyhou_gym import PyhouEnv
 from pyhou_gym_env.wrappers import FrameSkip, InfoCallback
 from stable_baselines3 import PPO
 import time
+import argparse
 
-env = FrameSkip(PyhouEnv(render_mode="human"), skip=10)
-model = PPO.load('best2', env=env)
+parser = argparse.ArgumentParser(description="Testing a trained model")
+parser.add_argument("--pattern", type=str, default="test_attack.json", help="Attack pattern to use")
+parser.add_argument("--model", type=str, default="best", help="Attack pattern to use")
+args = parser.parse_args()
+
+env = FrameSkip(PyhouEnv(render_mode="human", pattern=args.pattern), skip=10)
+model = PPO.load(args.model, env=env)
 
 obs, info = env.reset()
 

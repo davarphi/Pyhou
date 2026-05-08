@@ -2,15 +2,16 @@ import gymnasium as gym
 from pyhou_gym_env.envs.pyhou_gym import PyhouEnv
 from pyhou_gym_env.wrappers import FrameSkip, InfoCallback
 import time
+import argparse
 
 from stable_baselines3 import PPO
 
 reward = {
     "time_penalty": -0.01,
-    "enemy_hit": 10,
+    "enemy_hit":5,
     "player_hit": -30,
     "aligned_pos": 6,
-    "win":100,
+    "win":300,
     "loss":-200
 }
 
@@ -21,13 +22,18 @@ def print_training_stat(reward_dict):
 
     time.sleep(1)
 
-env = FrameSkip(PyhouEnv(reward_dict=reward), skip=10)
+parser = argparse.ArgumentParser(description="Training an agent")
+parser.add_argument("--pattern", type=str, default="test_attack.json", help="Attack pattern to use")
+parser.add_argument("--save", type=str, default="pyhou", help="Saved model name")
+args = parser.parse_args()
+env = FrameSkip(PyhouEnv(reward_dict=reward, pattern=args.pattern), skip=10)
 
 model = PPO("MlpPolicy", env, verbose=1)
 print("Model training begin")
 print_training_stat(reward)
-model.learn(total_timesteps=200000, callback=InfoCallback())
+model.learn(total_timesteps=500000, callback=InfoCallback())
 print("Training finished")
 
-model.save("pyhou")
+model_name = input("Save to?")
+model.save(args.save)
 print("Model saved to pyhou.zip")
