@@ -7,10 +7,10 @@ import argparse
 from stable_baselines3 import PPO
 
 reward = {
-    "time_penalty": -0.01,
+    "time_penalty": -0.001,
     "enemy_hit": 8,
-    "player_hit": -32,
-    "aligned_pos": 4,
+    "player_hit": -40,
+    "aligned_pos": 12,
     "win":50,
     "loss":-200
 }
@@ -34,7 +34,7 @@ env = FrameSkip(PyhouEnv(reward_dict=reward, pattern=args.pattern), skip=10)
 model = PPO("MlpPolicy", env, verbose=1)
 print("Model training begin")
 print_training_stat(reward)
-model.learn(total_timesteps=100000, callback=InfoCallback())
+model.learn(total_timesteps=500000, callback=InfoCallback())
 print("Training finished")
 
 model_name = input(f"Save to {args.save}? [Y/N] :")
