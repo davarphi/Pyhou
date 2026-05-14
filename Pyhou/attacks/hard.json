@@ -1,0 +1,28 @@
+{
+    "steps": [
+            {"type": "move", "vel_x": -1, "vel_y": 0, "speed": 5, "duration": 30},
+            {"type": "shoot", "pattern": "fan_aim", "cnt1":10, "cnt2":4, "ang1": 0, "ang2": 10, "spe1": 3, "spe2": 2},
+            {"type": "wait", "duration": 5},
+            {"type": "move", "vel_x": 0, "vel_y": 1, "speed": 5, "duration": 120},
+            {"type": "wait", "duration": 5},
+            {"type": "shoot", "pattern": "fan_aim", "cnt1":10, "cnt2":4, "ang1": 0, "ang2": 10, "spe1": 3, "spe2": 2},
+            {"type": "move", "vel_x": 1, "vel_y": 0, "speed": 5, "duration": 15},
+            {"type": "wait", "duration": 5},
+            {"type": "shoot", "pattern": "ring_hit_aim", "cnt1":10, "cnt2":3, "ang1": -90, "ang2": 20, "spe1": 4, "spe2": 2},
+            {"type": "move", "vel_x": 1, "vel_y": 0, "speed": 5, "duration": 15},
+            {"type": "wait", "duration": 10},
+            {"type": "shoot", "pattern": "ring_hit_aim", "cnt1":10, "cnt2":3, "ang1": -90, "ang2": 40, "spe1": 4, "spe2": 2},
+            {"type": "move", "vel_x": 1, "vel_y": 0, "speed": 5, "duration": 15},
+            {"type": "wait", "duration": 10},
+            {"type": "shoot", "pattern": "ring_hit_aim", "cnt1":10, "cnt2":3, "ang1": -90, "ang2": 60, "spe1": 4, "spe2": 2},
+            {"type": "move", "vel_x": 1, "vel_y": 0, "speed": 5, "duration": 15},
+            {"type": "move", "vel_x": 0, "vel_y": -1, "speed": 5, "duration": 60},
+            {"type": "wait", "duration": 10},
+            {"type": "shoot", "pattern": "meek_random", "cnt1":10, "cnt2":3, "ang1": -90, "ang2": 20, "spe1": 4, "spe2": 2},
+            {"type": "move", "vel_x": 0, "vel_y": -1, "speed": 5, "duration": 60},
+            {"type": "wait", "duration": 10},
+            {"type": "shoot", "pattern": "ring_hit_aim", "cnt1":10, "cnt2":3, "ang1": -90, "ang2": 60, "spe1": 4, "spe2": 2},
+            {"type": "move", "vel_x": -1, "vel_y": 0, "speed": 5, "duration": 30}
+    ]
+}
+

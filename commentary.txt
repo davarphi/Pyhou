@@ -1,0 +1,12 @@
+QoL : 
+Immediate save function
+Configurable test and training
+
+Reached bottleneck.
+
+Need more technique to learn about more hard levels like hard.json
+
+Ideas : 
+- Randomized domain
+- Learned curriculum
+- Meta learner

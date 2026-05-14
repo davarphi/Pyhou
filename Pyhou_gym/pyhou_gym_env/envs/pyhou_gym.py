@@ -11,13 +11,13 @@ class PyhouEnv(gym.Env):
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 60}
 
     # Here
-    def __init__(self, render_mode=None, reward_dict={}):
+    def __init__(self, render_mode=None, reward_dict={}, pattern="test_attack.json"):
         # Pygame size
         self.WIDTH = 576
         self.HEIGHT = 672
         self.reward = reward_dict
 
-        json_path = Path(__file__).parent.parent.parent / "attacks"/ "test_attack.json" # Ini nanti ganti
+        json_path = Path(__file__).parent.parent.parent / "attacks"/ pattern # Ini nanti ganti
         self.game = Game(str(json_path))
         # self.game = Game("test_attack.json")
         """ Take 1 : Reasonable Human Obs
@@ -90,7 +90,6 @@ class PyhouEnv(gym.Env):
         super().reset(seed=seed)
 
         self.game.reset()
-
         observation = self._get_obs()
         info = self._get_info()
 
@@ -120,7 +119,10 @@ class PyhouEnv(gym.Env):
         enemy_hits = self.game.player.player_bullets_hit - prev_player_bullets_hit
         player_hits = self.game.player.enemy_bullets_hit - prev_enemy_bullets_hit
 
-        if (np.abs(self.game.player.pos.x - self.game.enemy.pos.x) / self.game.player.pos.distance_to(self.game.enemy.pos) <= np.sin(np.deg2rad(2))):
+        in_range = np.abs(self.game.player.pos.x - self.game.enemy.pos.x) / self.game.player.pos.distance_to(self.game.enemy.pos) <= np.sin(np.deg2rad(2))
+        shootable = self.game.player.pos.y > self.game.enemy.pos.y
+
+        if (in_range and shootable):
             reward += self.reward.get("aligned_pos", 0)
 
         reward += enemy_hits * self.reward.get("enemy_hit", 1)
