@@ -14,3 +14,13 @@ To train the game and see some RL stuff
 4. Run `uv run test.py` to see the agent play by itself.
 
 There's this weird error from Stable Baselines 3 that requires you to have MSVC. YOu should install them if you got error mentioning DLL.
+
+Best reward so far : 
+reward = {
+    "time_penalty": -0.01,
+    "enemy_hit": 8,
+    "player_hit": -8,
+    "aligned_pos": 0.25,
+    "win":200,
+    "loss":-150
+}
