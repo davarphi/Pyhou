@@ -44,6 +44,7 @@ Best for now : reward = {
     "loss":-200
 }, frame_skip 10, train > 100000
 
+Holy shit kinda good
 reward = {
     "time_penalty": -0.001,
     "enemy_hit": 8,

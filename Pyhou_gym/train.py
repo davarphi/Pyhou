@@ -3,14 +3,15 @@ from pyhou_gym_env.envs.pyhou_gym import PyhouEnv
 from pyhou_gym_env.wrappers import FrameSkip, InfoCallback
 import time
 import argparse
+from pathlib import Path
 
 from stable_baselines3 import PPO
 
 reward = {
-    "time_penalty": -0.001,
-    "enemy_hit": 8,
-    "player_hit": -40,
-    "aligned_pos": 12,
+    "time_penalty": -0.01,
+    "enemy_hit": 10,
+    "player_hit": -80,
+    "aligned_pos": 4,
     "win":50,
     "loss":-200
 }
@@ -34,12 +35,12 @@ env = FrameSkip(PyhouEnv(reward_dict=reward, pattern=args.pattern), skip=10)
 model = PPO("MlpPolicy", env, verbose=1)
 print("Model training begin")
 print_training_stat(reward)
-model.learn(total_timesteps=500000, callback=InfoCallback())
+model.learn(total_timesteps=100000, callback=InfoCallback())
 print("Training finished")
 
 model_name = input(f"Save to {args.save}? [Y/N] :")
 if model_name.upper() == "Y":
-    model.save(args.save)
-    print(f"Model saved to {args.save}.zip")
+    model.save(Path("models") / args.save)
+    print(f"Model saved to /models/{args.save}.zip")
 else:
     print("Model is not saved")

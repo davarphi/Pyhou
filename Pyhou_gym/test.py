@@ -3,6 +3,7 @@ from pyhou_gym_env.envs.pyhou_gym import PyhouEnv
 from pyhou_gym_env.wrappers import FrameSkip, InfoCallback
 from stable_baselines3 import PPO
 import time
+from pathlib import Path
 import argparse
 
 parser = argparse.ArgumentParser(description="Testing a trained model")
@@ -11,7 +12,7 @@ parser.add_argument("--model", type=str, default="pyhou", help="Model to use")
 args = parser.parse_args()
 
 env = FrameSkip(PyhouEnv(render_mode="human", pattern=args.pattern), skip=10)
-model = PPO.load(args.model, env=env)
+model = PPO.load(Path("models") / args.model, env=env)
 
 obs, info = env.reset()
 
