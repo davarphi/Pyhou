@@ -44,6 +44,15 @@ Best for now : reward = {
     "loss":-200
 }, frame_skip 10, train > 100000
 
+reward = {
+    "time_penalty": -0.001,
+    "enemy_hit": 8,
+    "player_hit": -40,
+    "aligned_pos": 12,
+    "win":50,
+    "loss":-200
+} training 500000
+
 Best stats (for now): 
 
 Health : 0.0
