@@ -8,12 +8,12 @@ from pathlib import Path
 from stable_baselines3 import PPO
 
 reward = {
-    "time_penalty": -0.01,
-    "enemy_hit": 10,
-    "player_hit": -80,
-    "aligned_pos": 4,
-    "win":50,
-    "loss":-200
+    "time_penalty": -0.001,
+    "enemy_hit": 12,
+    "player_hit": -60,
+    "aligned_pos": 8,
+    "win":100,
+    "loss":-400
 }
 
 def print_training_stat(reward_dict):
@@ -35,12 +35,9 @@ env = FrameSkip(PyhouEnv(reward_dict=reward, pattern=args.pattern), skip=10)
 model = PPO("MlpPolicy", env, verbose=1)
 print("Model training begin")
 print_training_stat(reward)
-model.learn(total_timesteps=100000, callback=InfoCallback())
+model.learn(total_timesteps=300000, callback=InfoCallback())
 print("Training finished")
 
-model_name = input(f"Save to {args.save}? [Y/N] :")
-if model_name.upper() == "Y":
-    model.save(Path("models") / args.save)
-    print(f"Model saved to /models/{args.save}.zip")
-else:
-    print("Model is not saved")
+
+model.save(Path("models") / args.save)
+print(f"Model saved to /models/{args.save}.zip")

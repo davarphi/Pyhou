@@ -23,10 +23,10 @@ def print_stat():
     enemy_get_hit_count = env.env.game.player.player_bullets_hit
     time_taken = round(end - start, 3)
 
-    print(f"Health : {health}")
-    print(f"Bullets shot : {bullets_shot}")
     print(f"Bullets that hit player : {player_get_hit_count}")
     print(f"Bullets that hit enemy : {enemy_get_hit_count}")
+    print(f"Bullets shot : {bullets_shot}")
+    print(f"Enemy health : {health}")
     print(f"Time : {time_taken}")
 
 start = time.time()
