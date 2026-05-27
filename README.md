@@ -35,30 +35,4 @@ test.py also have several args you can use
 * --model (name) : use the trained model to play with. Defaults to pyhou
 
 
-Best for now : reward = {
-    "time_penalty": -0.01,
-    "enemy_hit": 8,
-    "player_hit": -32,
-    "aligned_pos": 4,
-    "win":50,
-    "loss":-200
-}, frame_skip 10, train > 100000
 
-Holy shit kinda good
-reward = {
-    "time_penalty": -0.001,
-    "enemy_hit": 8,
-    "player_hit": -40,
-    "aligned_pos": 12,
-    "win":50,
-    "loss":-200
-} training 500000
-
-Best stats (for now): 
-
-Health : 0.0
-Bullets that hit player : 8
-Bullets that hit enemy : 100
-Time : 24.284
-
-test_attack.json can be done optimally humanly by just going to the bottom and strafe.
