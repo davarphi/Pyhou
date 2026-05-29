@@ -8,10 +8,12 @@ from pathlib import Path
 from stable_baselines3 import PPO
 
 reward = {
-    "time_penalty": -0.001,
-    "enemy_hit": 12,
-    "player_hit": -60,
-    "aligned_pos": 8,
+    "time_penalty": -0.1,
+    "enemy_hit": 8,
+    "player_hit": -5,
+    "aligned_pos": 0.1,
+    "better_pos": 0.05,
+    "oor_penalty" : -0.1,
     "win":100,
     "loss":-400
 }

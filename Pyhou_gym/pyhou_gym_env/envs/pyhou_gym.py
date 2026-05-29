@@ -49,6 +49,7 @@ class PyhouEnv(gym.Env):
         self.window = None
         self.clock = None
 
+        self.prev_angle = None
     
     def _get_obs(self):
         # -1 is better value for missing values though
@@ -90,6 +91,8 @@ class PyhouEnv(gym.Env):
         super().reset(seed=seed)
 
         self.game.reset()
+        to_enemy = self.game.enemy.pos - self.game.player.pos
+        self.prev_angle = abs(to_enemy.angle_to(pygame.math.Vector2(0, 1))) 
         observation = self._get_obs()
         info = self._get_info()
 
@@ -97,7 +100,7 @@ class PyhouEnv(gym.Env):
             self._render_frame()
 
         return observation, info
-
+    
     def step(self, action):
         """
         Alpha stage rewards : 
@@ -114,26 +117,42 @@ class PyhouEnv(gym.Env):
         truncated = self.game.is_truncated() # Replace this to False to use the built-in TimeLimit wrapper
         reward = 0 
 
-        reward += self.reward.get("time_penalty", -0.001)
+        reward += self.reward.get("time_penalty", 0)
 
         enemy_hits = self.game.player.player_bullets_hit - prev_player_bullets_hit
         player_hits = self.game.player.enemy_bullets_hit - prev_enemy_bullets_hit
 
-        in_range = np.abs(self.game.player.pos.x - self.game.enemy.pos.x) / self.game.player.pos.distance_to(self.game.enemy.pos) <= np.sin(np.deg2rad(2))
+
+        to_enemy = self.game.enemy.pos - self.game.player.pos
+        angle = abs(to_enemy.angle_to(pygame.math.Vector2(0, -1))) 
+
+        if angle > 5:
+            reward += (angle - 5) * self.reward.get("oor_penalty", -1)
+
+        #aligned_pos step
         shootable = self.game.player.pos.y > self.game.enemy.pos.y
 
-        if (in_range and shootable):
+        if (angle < 2 and shootable):
             reward += self.reward.get("aligned_pos", 0)
 
-        reward += enemy_hits * self.reward.get("enemy_hit", 1)
-        reward += player_hits * self.reward.get("player_hit", -0.5)
+        # bettering angle approach
+        angle_del = - (angle - self.prev_angle)
+
+        
+        if shootable and angle_del > 0:
+            reward += angle_del * self.reward.get("better_pos", 1)
+
+        self.prev_angle = angle
+
+        reward += enemy_hits * self.reward.get("enemy_hit", 0)
+        reward += player_hits * self.reward.get("player_hit", 0)
 
 
         if self.game.is_win():
-            reward += self.reward.get("win", 100)
+            reward += self.reward.get("win", 0)
 
         elif self.game.is_loss():
-            reward += self.reward.get("loss", 150)
+            reward += self.reward.get("loss", 0)
 
         observation = self._get_obs()
         info = self._get_info()

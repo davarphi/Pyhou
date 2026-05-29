@@ -20,7 +20,9 @@ The reward for now :
 * time_penalty = penalty for each frame the agent still playing.
 * enemy_hit = reward for each hit to enemy.
 * player_hit = penalty to each player hit.
-* aligned_pos = reward for being in a position where you can shoot the enemy.
+* aligned_pos = reward for being in a position aligned with the enemy vertical alignment. currently set at 2 degrees
+* oor_penalty = penalty for being out of range. scales linearly. only active when exceeding certain angle. currently set at 10 degrees
+* better_pos = reward for moving to enemy vertical alignment.
 * win = reward for each win.
 * loss = reward for each loss. this is when the player touches the enemy.
 
