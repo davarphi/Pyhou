@@ -55,15 +55,6 @@ reward = {
 
 Conclusion : I hit a plateau
 
-Best stats (for now in test_attack): 
-
-Health : 0.0
-Bullets that hit player : 8
-Bullets that hit enemy : 100
-Time : 24.284
-
-test_attack.json can be done optimally humanly by just going to the bottom and strafe.
-
 Analysis : 
 Straight PPO -> needs reward tuning and iteration tuning, risks policy collapse
 Added potential based reward -> Good on chasing and aligning, but dodging need more work
