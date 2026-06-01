@@ -7,6 +7,7 @@ from pathlib import Path
 
 from stable_baselines3 import PPO
 
+# best so far
 reward = {
     "time_penalty": -0.1,
     "enemy_hit": 8,
@@ -37,7 +38,7 @@ env = FrameSkip(PyhouEnv(reward_dict=reward, pattern=args.pattern), skip=10)
 model = PPO("MlpPolicy", env, verbose=1)
 print("Model training begin")
 print_training_stat(reward)
-model.learn(total_timesteps=300000, callback=InfoCallback())
+model.learn(total_timesteps=500000, callback=InfoCallback()) #45000 is enough i think
 print("Training finished")
 
 

@@ -13,7 +13,7 @@ class Enemy:
         self.vel = Vector2(0, 0)
         self.speed = 0
         self.r = 14
-        self.health = 100.0
+        self.health = 200.0
         self.bullets = []
         self.dummy = 0
 
