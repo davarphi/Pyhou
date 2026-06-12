@@ -9,7 +9,7 @@ from stable_baselines3 import PPO
 
 # best so far
 reward = {
-    "time_penalty": 0.01,
+    "time_penalty": -0.1,
     "enemy_hit": 4,
     "player_hit": -35,
     "aligned_pos": 0.01,
