@@ -9,38 +9,41 @@ from stable_baselines3 import PPO
 
 # best so far
 reward = {
-    "time_penalty": -0.1,
-    "enemy_hit": 8,
-    "player_hit": -5,
-    "aligned_pos": 0.1,
-    "better_pos": 0.05,
+    "time_penalty": 0.01,
+    "enemy_hit": 4,
+    "player_hit": -35,
+    "aligned_pos": 0.01,
+    "better_pos": 0,
     "oor_penalty" : -0.1,
     "win":100,
     "loss":-400
-}
+} 
 
-def print_training_stat(reward_dict):
+def print_training_stat(reward_dict, iter):
     print(f"Training : {args.pattern}")
     time.sleep(0.5)
     print("Stats : ")
     for key, value in reward_dict.items():
         print(f"{key} : {value}")
 
+    print(f"Iteration : {iter}")
     time.sleep(0.5)
 
 parser = argparse.ArgumentParser(description="Training an agent")
 parser.add_argument("--pattern", type=str, default="test_attack.json", help="Attack pattern to use")
 parser.add_argument("--save", type=str, default="pyhou", help="Saved model name")
+parser.add_argument("--iter", type=str, default=500000, help="Training iteration")
 args = parser.parse_args()
 
+timestep = int(args.iter)
 env = FrameSkip(PyhouEnv(reward_dict=reward, pattern=args.pattern), skip=10)
 
-model = PPO("MlpPolicy", env, verbose=1)
+model = PPO("MlpPolicy", env, verbose=1, ent_coef=0.01)
 print("Model training begin")
-print_training_stat(reward)
-model.learn(total_timesteps=500000, callback=InfoCallback()) #45000 is enough i think
+print_training_stat(reward, timestep)
+model.learn(total_timesteps=timestep, callback=InfoCallback()) #45000 is enough i think
 print("Training finished")
 
-
+print_training_stat(reward, timestep)
 model.save(Path("models") / args.save)
 print(f"Model saved to /models/{args.save}.zip")

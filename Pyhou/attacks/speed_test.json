@@ -1,0 +1,7 @@
+{
+    "steps": [
+            {"type": "shoot", "pattern": "fan_no_aim", "cnt1":2, "cnt2":3, "ang1": 90, "ang2": 2, "spe1": 75, "spe2": 20},
+            {"type": "wait", "duration": 100}
+    ]
+}
+

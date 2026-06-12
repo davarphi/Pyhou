@@ -42,6 +42,7 @@ reward = {
 }
 
 Holy shit this is gold standard. Good at chasing but sucks for static enemy. 
+Let's create a potential based reward
 reward = {
     "time_penalty": -0.1,
     "enemy_hit": 8,
@@ -66,6 +67,21 @@ reward = {
     "win":100,
     "loss":-400
 } 500k training
+
+Policy B : Dodger -> Must be good at dodging that suck at chasing target
+reward = {
+    "time_penalty": 0.005,
+    "enemy_hit": 4,
+    "player_hit": -35,
+    "aligned_pos": 0.01,
+    "better_pos": 0,
+    "oor_penalty" : -0.1,
+    "win":100,
+    "loss":-400
+} 
+For easy_shoot, managed to position themselves that is safe but able to easy_shoot
+
+But for test_attack, terrible performance
 
 Analysis : 
 Straight PPO -> needs reward tuning and iteration tuning, risks policy collapse
