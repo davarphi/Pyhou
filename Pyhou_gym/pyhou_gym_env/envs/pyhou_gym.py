@@ -68,7 +68,7 @@ class PyhouEnv(gym.Env):
             obs[5*i + 5] = p.pos.y / self.HEIGHT 
             obs[5*i + 6] = p.vel.x / p.speed
             obs[5*i + 7] = p.vel.y / p.speed
-            obs[5*i + 8] = np.tanh(min(p.speed / 25, 50)) # 25 is kinda mid-ish
+            obs[5*i + 8] = np.tanh(min(p.speed / 5, 6)) # 25 is kinda mid-ish
 
         return obs 
         # Return the 54-vector array of the observation
@@ -110,26 +110,33 @@ class PyhouEnv(gym.Env):
         +100 per win
         -150 per loss
         """
+
         prev_player_bullets_hit = self.game.player.player_bullets_hit
         prev_enemy_bullets_hit = self.game.player.enemy_bullets_hit
+
         self.game.apply_step(action)
         terminated = self.game.is_terminated()
         truncated = self.game.is_truncated() # Replace this to False to use the built-in TimeLimit wrapper
         reward = 0 
 
-        reward += self.reward.get("time_penalty", 0)
+        reward += self.reward.get("time_penalty", 0) # time_penalty
 
+        # Bullet hits related reward
         enemy_hits = self.game.player.player_bullets_hit - prev_player_bullets_hit
         player_hits = self.game.player.enemy_bullets_hit - prev_enemy_bullets_hit
 
+        reward += enemy_hits * self.reward.get("enemy_hit", 0)
+        reward += player_hits * self.reward.get("player_hit", 0)
+        #
 
+        # Position related hits
         to_enemy = self.game.enemy.pos - self.game.player.pos
         angle = abs(to_enemy.angle_to(pygame.math.Vector2(0, -1))) 
 
         if angle > 5:
-            reward += (angle - 5) * self.reward.get("oor_penalty", -1)
+            reward += (angle - 5) * self.reward.get("oor_penalty", 0)
 
-        #aligned_pos step
+        # aligned_pos step
         shootable = self.game.player.pos.y > self.game.enemy.pos.y
 
         if (angle < 2 and shootable):
@@ -140,13 +147,19 @@ class PyhouEnv(gym.Env):
 
         
         if shootable and angle_del > 0:
-            reward += angle_del * self.reward.get("better_pos", 1)
+            reward += angle_del * self.reward.get("better_pos", 0)
 
         self.prev_angle = angle
+        
+        # Proxim reward
+        for bullet in self.game.enemy.bullets:
+            dist = self.game.player.pos.distance_to(bullet.pos)
+            HIT_DIST = 12
+            THRESHOLD = 26
+            if dist <= HIT_DIST or dist >= THRESHOLD:
+                continue
 
-        reward += enemy_hits * self.reward.get("enemy_hit", 0)
-        reward += player_hits * self.reward.get("player_hit", 0)
-
+            reward += (THRESHOLD - dist) / THRESHOLD * self.reward.get("prox_reward", 0)
 
         if self.game.is_win():
             reward += self.reward.get("win", 0)

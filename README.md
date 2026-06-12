@@ -30,6 +30,7 @@ train.py have several args you can use
 
 * --pattern (name).json : run (name).json file to train. Defaults to test_attack.json
 * --save (name) : save the training model to (name).zip. Defaults to pyhou
+* --iter (timestep) : how many iteration of training. Defaults to 500k
 
 test.py also have several args you can use
 
