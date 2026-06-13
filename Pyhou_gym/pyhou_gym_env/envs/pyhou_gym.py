@@ -68,7 +68,7 @@ class PyhouEnv(gym.Env):
             obs[5*i + 5] = p.pos.y / self.HEIGHT 
             obs[5*i + 6] = p.vel.x / p.speed
             obs[5*i + 7] = p.vel.y / p.speed
-            obs[5*i + 8] = np.tanh(min(p.speed / 5, 6)) # 25 is kinda mid-ish
+            obs[5*i + 8] = np.tanh(min(p.speed / 8, 4)) # 25 is kinda mid-ish
 
         return obs 
         # Return the 54-vector array of the observation

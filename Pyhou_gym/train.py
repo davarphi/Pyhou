@@ -10,15 +10,14 @@ from stable_baselines3 import PPO
 # best so far
 reward = {
     "time_penalty": -0.1,
-    "enemy_hit": 4,
-    "player_hit": -35,
-    "aligned_pos": 0.01,
-    "better_pos": 0,
+    "enemy_hit": 8,
+    "player_hit": -5,
+    "aligned_pos": 0.1,
+    "better_pos": 0.05,
     "oor_penalty" : -0.1,
     "win":100,
     "loss":-400
-} 
-
+}
 def print_training_stat(reward_dict, iter):
     print(f"Training : {args.pattern}")
     time.sleep(0.5)

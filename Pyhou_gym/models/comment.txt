@@ -1,3 +1,0 @@
-IDK how to get bestsofar's performance.
-
-If the model got the keyword new, it's probably trained using the chaser policy
