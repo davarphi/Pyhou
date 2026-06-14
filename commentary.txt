@@ -68,7 +68,20 @@ reward = {
     "loss":-400
 } 500k training
 
-ALT TO EMPHASIZE DODGING A LIL BIT
+reward = {
+    "time_penalty": -0.1,
+    "enemy_hit": 8,
+    "player_hit": -5,
+    "aligned_pos": 0.2,
+    "better_pos": 0.1,
+    "oor_penalty" : -0.2,
+    "win":100,
+    "loss":-400
+} 
+This is better at following visually but turns out, performance wise, old model is better.
+
+A IS FINAL, JANGAN UTAK ATIK LAGI< FOKUS KE MODEL B.
+
 Policy B : Dodger -> Must be good at dodging that suck at chasing target
 reward = {
     "time_penalty": 0.005,
@@ -76,17 +89,18 @@ reward = {
     "player_hit": -35,
     "aligned_pos": 0.01,
     "better_pos": 0,
-    "oor_penalty" : -0.1,
+    "oor_penalty" : -0.01,
     "win":100,
     "loss":-400
 } 
 For easy_shoot, managed to position themselves that is safe but able to easy_shoot
 
 But for test_attack, terrible performance
-Problem for now : For dodger, the agent prefer to be idle rather than actively dodging.
+Problem for now : For dodger, the agent prefer to be idle rather than actively dodging. THough, numerically, it is better
 
 
 Good strategy : 
+Add frame skips -> Agent movement is smoother.
 Added potential based reward -> Good on chasing and aligning, but dodging need more work
 
 Current fix : 

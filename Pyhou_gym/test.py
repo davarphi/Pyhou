@@ -30,6 +30,7 @@ def print_stat():
     print(f"Time : {time_taken}")
 
 start = time.time()
+
 for i in range(7200):
     action, _state = model.predict(obs)
     obs, reward, terminated, truncated, info = env.step(action)

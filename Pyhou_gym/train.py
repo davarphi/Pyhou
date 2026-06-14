@@ -14,10 +14,12 @@ reward = {
     "player_hit": -5,
     "aligned_pos": 0.1,
     "better_pos": 0.05,
+    "prox_reward": -0.05,
     "oor_penalty" : -0.1,
     "win":100,
     "loss":-400
-}
+} 
+
 def print_training_stat(reward_dict, iter):
     print(f"Training : {args.pattern}")
     time.sleep(0.5)
@@ -37,7 +39,7 @@ args = parser.parse_args()
 timestep = int(args.iter)
 env = FrameSkip(PyhouEnv(reward_dict=reward, pattern=args.pattern), skip=10)
 
-model = PPO("MlpPolicy", env, verbose=1, ent_coef=0.01)
+model = PPO("MlpPolicy", env, verbose=1, ent_coef=0.05) # 0.01 to 0.05
 print("Model training begin")
 print_training_stat(reward, timestep)
 model.learn(total_timesteps=timestep, callback=InfoCallback()) #45000 is enough i think

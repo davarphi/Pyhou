@@ -127,7 +127,7 @@ class PyhouEnv(gym.Env):
 
         reward += enemy_hits * self.reward.get("enemy_hit", 0)
         reward += player_hits * self.reward.get("player_hit", 0)
-        #
+        
 
         # Position related hits
         to_enemy = self.game.enemy.pos - self.game.player.pos
@@ -154,12 +154,14 @@ class PyhouEnv(gym.Env):
         # Proxim reward
         for bullet in self.game.enemy.bullets:
             dist = self.game.player.pos.distance_to(bullet.pos)
-            HIT_DIST = 12
-            THRESHOLD = 26
-            if dist <= HIT_DIST or dist >= THRESHOLD:
-                continue
+            bullet_to_player = self.game.player.pos - bullet.pos
+            threat = bullet_to_player * bullet.vel
+            THRESHOLD = 20
+            if dist <= THRESHOLD and threat > 0:
+                threat_normal  = bullet_to_player.normalize()*bullet.vel.normalize()
+                reward += threat_normal * (1 - dist/THRESHOLD) * self.reward.get("prox_reward", 0)
 
-            reward += (THRESHOLD - dist) / THRESHOLD * self.reward.get("prox_reward", 0)
+
 
         if self.game.is_win():
             reward += self.reward.get("win", 0)
