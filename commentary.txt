@@ -97,7 +97,11 @@ For easy_shoot, managed to position themselves that is safe but able to easy_sho
 
 But for test_attack, terrible performance
 Problem for now : For dodger, the agent prefer to be idle rather than actively dodging. THough, numerically, it is better
+I think this method is flawed from the start. 
+I want to try learned curriculum.
 
+Spam_leve1one : 
+It is to prevent being idle
 
 Good strategy : 
 Add frame skips -> Agent movement is smoother.
