@@ -9,14 +9,14 @@ from stable_baselines3 import PPO
 
 # best so far
 reward = {
-    "time_penalty": -0.1,
-    "enemy_hit": 8,
-    "player_hit": -5,
-    "aligned_pos": 0.1,
-    "better_pos": 0.05,
-    "prox_reward": -0.05,
-    "oor_penalty" : -0.1,
-    "win":100,
+    "time_penalty": 0.001,
+    "enemy_hit": 0,
+    "player_hit": -10,
+    "aligned_pos": 0.005,
+    "better_pos": 0.001,
+    "prox_reward": -0.002,
+    "oor_penalty" : -0.005,
+    "win": 100,
     "loss":-400
 } 
 

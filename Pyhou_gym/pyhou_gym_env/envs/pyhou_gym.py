@@ -139,7 +139,7 @@ class PyhouEnv(gym.Env):
         # aligned_pos step
         shootable = self.game.player.pos.y > self.game.enemy.pos.y
 
-        if (angle < 2 and shootable):
+        if (angle <= 2 and shootable):
             reward += self.reward.get("aligned_pos", 0)
 
         # bettering angle approach
@@ -155,13 +155,11 @@ class PyhouEnv(gym.Env):
         for bullet in self.game.enemy.bullets:
             dist = self.game.player.pos.distance_to(bullet.pos)
             bullet_to_player = self.game.player.pos - bullet.pos
-            threat = bullet_to_player * bullet.vel
-            THRESHOLD = 20
-            if dist <= THRESHOLD and threat > 0:
-                threat_normal  = bullet_to_player.normalize()*bullet.vel.normalize()
-                reward += threat_normal * (1 - dist/THRESHOLD) * self.reward.get("prox_reward", 0)
-
-
+            threat = bullet_to_player.normalize() * bullet.vel
+            HIT_DIST = 12
+            THRESHOLD = 30
+            if dist <= THRESHOLD and threat > 0 and dist >= HIT_DIST:
+                reward += threat * (1 - dist/THRESHOLD) * self.reward.get("prox_reward", 0)
 
         if self.game.is_win():
             reward += self.reward.get("win", 0)
