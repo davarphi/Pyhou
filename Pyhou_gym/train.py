@@ -9,16 +9,15 @@ from stable_baselines3 import PPO
 
 # best so far
 reward = {
-    "time_penalty": 0.001,
-    "enemy_hit": 0,
-    "player_hit": -10,
-    "aligned_pos": 0.005,
-    "better_pos": 0.001,
-    "prox_reward": -0.002,
-    "oor_penalty" : -0.005,
-    "win": 100,
-    "loss":-400
-} 
+    "time_penalty_early": 0.002,
+    "time_penalty_late": -0.01,
+    "enemy_hit": 1,
+    "player_hit": -1,
+    "aligned_shoot": 0.02,
+    "prox_reward": -0.1,
+    "win":100,
+    "loss":-250
+}
 
 def print_training_stat(reward_dict, iter):
     print(f"Training : {args.pattern}")
@@ -37,9 +36,9 @@ parser.add_argument("--iter", type=str, default=500000, help="Training iteration
 args = parser.parse_args()
 
 timestep = int(args.iter)
-env = FrameSkip(PyhouEnv(reward_dict=reward, pattern=args.pattern), skip=10)
+env = FrameSkip(PyhouEnv(reward_dict=reward, pattern=args.pattern), skip=4)
 
-model = PPO("MlpPolicy", env, verbose=1, ent_coef=0.05) # 0.01 to 0.05
+model = PPO("MlpPolicy", env, verbose=1, ent_coef=0.01)
 print("Model training begin")
 print_training_stat(reward, timestep)
 model.learn(total_timesteps=timestep, callback=InfoCallback()) #45000 is enough i think

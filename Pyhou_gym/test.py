@@ -11,7 +11,7 @@ parser.add_argument("--pattern", type=str, default="test_attack.json", help="Att
 parser.add_argument("--model", type=str, default="pyhou", help="Model to use")
 args = parser.parse_args()
 
-env = FrameSkip(PyhouEnv(render_mode="human", pattern=args.pattern), skip=10)
+env = FrameSkip(PyhouEnv(render_mode="human", pattern=args.pattern), skip=4)
 model = PPO.load(Path("models") / args.model, env=env)
 
 obs, info = env.reset()
@@ -32,7 +32,7 @@ def print_stat():
 start = time.time()
 
 for i in range(7200):
-    action, _state = model.predict(obs)
+    action, _state = model.predict(obs, deterministic = True)
     obs, reward, terminated, truncated, info = env.step(action)
     env.render()
     if terminated or truncated:

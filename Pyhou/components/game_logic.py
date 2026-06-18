@@ -16,8 +16,6 @@ DIRECTIONAL_VECTOR = {
     8: (1, -1)
 }
 
-TIME_LIMIT = 7200
-
 class Game:
     def __init__(self, attack_pat):
         self.width = WIDTH
@@ -37,14 +35,16 @@ class Game:
 
     def apply_step(self, action):
         vel_dir = DIRECTIONAL_VECTOR[action[0]]
-        self.player.vel = Vector2(vel_dir)
+        self.player.vel = Vector2(vel_dir).normalize() if vel_dir != (0, 0) else Vector2(0, 0)
         is_slow = action[1] == 1
         is_shoot = action[2] == 1
 
+        self.player.is_slow = is_slow
+
         if is_shoot:
-            self.player.shoot(is_slow)
+            self.player.shoot()
         
-        self.player.update_pos(is_slow)
+        self.player.update_pos()
         self.player.update_proj()
         self.enemy.update_action(self.player.pos)
         self.enemy.update_proj()

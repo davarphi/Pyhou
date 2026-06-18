@@ -4,18 +4,77 @@ from gymnasium import spaces
 import pygame
 import numpy as np
 from pygame.math import Vector2
+import math
 from components.game_logic import Game
+from components.constants import *
 from pathlib import Path
+
+# def threat_score(bullet, player_pos, warning_zone_radius, speed_scale):
+#     to_player = player_pos - bullet.pos  # pygame.Vector2 subtraction
+#     distance = to_player.length()
+    
+#     if distance < 1e-6:
+#         return float('inf')
+    
+#     to_player_unit = to_player.normalize()
+#     dot = max(0, to_player_unit.dot(bullet.vel.normalize()))
+#     proximity = 1 - distance / warning_zone_radius
+#     speed_factor = bullet.speed
+    
+#     return dot * proximity * speed_factor
+D_SCALE = 40.0
+T_SCALE = 30.0
+NUM_SECTORS = 8
+N_IMMINENT = 3
+MAX_BULLET_SPEED = 40.0
+D_REF = 200.0
+T_CAP = 120.0
+PROX_CAP = 4.0
+SIGMA = math.radians(6)
+OBS_SIZE = 38
+TIME_LIMIT = 7200
+
+def cpa(bullet, player):
+    pos_vec = bullet.pos - player.pos
+
+    rv = pos_vec * bullet.vel
+
+    if rv >= 0:
+        return math.inf, pos_vec.length(), 0.0
+    
+    vv = bullet.vel.length_squared()
+
+    if vv < 1e-8:
+        return math.inf, pos_vec.length(), 0.0
+    
+    t = - rv/vv
+    d_min_vec = pos_vec + bullet.vel*t
+    d_min = d_min_vec.length()
+    threat = math.exp(-d_min / D_SCALE) * math.exp(-t / T_SCALE)
+    return t, d_min, threat
+
+def sector_of(pos_vec):
+    ang = math.atan2(pos_vec.y, pos_vec.x)
+    return int(round(ang / (2 * math.pi / NUM_SECTORS))) % NUM_SECTORS
+
+def get_angle_pos(enemy, player):
+    dx = enemy.pos.x - player.pos.x
+    dy = player.pos.y - enemy.pos.y # in y coord, down is positive
+    angle_pos = math.atan2(dx, dy)
+
+    return angle_pos 
+
 
 class PyhouEnv(gym.Env):
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 60}
 
     # Here
-    def __init__(self, render_mode=None, reward_dict={}, pattern="test_attack.json"):
+    def __init__(self, render_mode=None, reward_dict={}, pattern="test_attack.json", iter=500000):
         # Pygame size
         self.WIDTH = 576
         self.HEIGHT = 672
         self.reward = reward_dict
+        self.iter = iter
 
         json_path = Path(__file__).parent.parent.parent / "attacks"/ pattern # Ini nanti ganti
         self.game = Game(str(json_path))
@@ -26,7 +85,8 @@ class PyhouEnv(gym.Env):
         Enemy proj : Take 10 nearest for now, take pos (2) and dir vel (2) and speed -> 5*10 = 50 
         Total = 54
         """
-        self.observation_space = spaces.Box(low=-1, high=1, shape=(54,), dtype=np.float32)
+        self.observation_space = spaces.Box(low=-1, high=1, shape=(OBS_SIZE,), dtype=np.float32)
+        self._placeholder = np.zeros(OBS_SIZE, dtype=np.float32)
         # ^ I really don't know what to put...
 
         # We have 9 x 2 x 2 actions, corresponding to the 8 cardinal directions + 1 stay, Binary slow mode, Binary shoot
@@ -38,6 +98,7 @@ class PyhouEnv(gym.Env):
         """
         assert render_mode is None or render_mode in self.metadata["render_modes"]
         self.render_mode = render_mode
+        self.build_obs = True
 
         """
         If human-rendering is used, `self.window` will be a reference
@@ -51,24 +112,61 @@ class PyhouEnv(gym.Env):
 
         self.prev_angle = None
     
+    def _get_danger(self):
+        d = 0.0
+        for b in self.game.enemy.bullets:
+            _, _, th = cpa(b, self.game.player)
+            if th > d:
+                d = th
+        return d
+    
     def _get_obs(self):
-        # -1 is better value for missing values though
-        obs = np.zeros(54, dtype=np.float32)
+        obs = np.zeros(38, dtype=np.float32)
+        dx = self.game.enemy.pos.x - self.game.player.pos.x
+        dy = self.game.player.pos.y - self.game.enemy.pos.y # in y coord, down is positive
+        angle_pos = math.atan2(dx, dy) 
+        player_vel = self.game.player.vel * self.game.player.speed
 
         obs[0] = self.game.player.pos.x / self.WIDTH # Player rel x pos
         obs[1] = self.game.player.pos.y / self.HEIGHT # Player rel y pos
-        obs[2] = self.game.enemy.pos.x / self.WIDTH # Enemy rel x pos
-        obs[3] = self.game.enemy.pos.y / self.HEIGHT # Enemy rel y pos
+        obs[2] = dx / self.WIDTH # Enemy rel x pos
+        obs[3] = dy / self.HEIGHT # Enemy rel y pos
+        obs[4] = player_vel.x / MAX_BULLET_SPEED
+        obs[5] = player_vel.y / MAX_BULLET_SPEED
+        obs[5] = 1.0 if self.game.player.is_slow else 0.0 
+        obs[7] = angle_pos / (math.pi/2)
+        obs[8] = (TIME_LIMIT - self.game.tick)/TIME_LIMIT
 
-        proj_list = self.game.enemy.bullets
-        nearest = sorted(proj_list, key=lambda p : ((p.pos.x - self.game.player.pos.x)**2 + (p.pos.y - self.game.player.pos.y)**2))[:10]
+        sector_threat = [0.0] * NUM_SECTORS
+        cache = []
 
-        for i, p in enumerate(nearest):
-            obs[5*i + 4] = p.pos.x / self.WIDTH
-            obs[5*i + 5] = p.pos.y / self.HEIGHT 
-            obs[5*i + 6] = p.vel.x / p.speed
-            obs[5*i + 7] = p.vel.y / p.speed
-            obs[5*i + 8] = np.tanh(min(p.speed / 8, 4)) # 25 is kinda mid-ish
+        for b in self.game.enemy.bullets:
+            t, d_min, threat = cpa(b, self.game.player)
+            if threat <= 0.0:
+                continue
+
+            pos_vec = b.pos - self.game.player.pos
+            s = sector_of(pos_vec)
+            sector_threat[s] = max(sector_threat[s], threat)
+            cache.append((threat, t, d_min, pos_vec, b))
+
+        
+        for k in range(NUM_SECTORS):
+            obs[9 + k] = sector_threat[k]
+
+
+        cache.sort(key=lambda c: c[0], reverse=True)
+        for i in range(N_IMMINENT):
+            n = 17 + i * 7
+            if i < len(cache):
+                _, t, d_min, pos_vec, b = cache[i]
+                obs[n + 0] = pos_vec.x / self.WIDTH
+                obs[n + 1] = pos_vec.y / self.HEIGHT
+                obs[n + 2] = b.vel.x / MAX_BULLET_SPEED
+                obs[n + 3] = b.vel.y / MAX_BULLET_SPEED
+                obs[n + 4] = min(t, T_CAP) / T_CAP
+                obs[n + 5] = min(d_min, D_REF) / D_REF
+                obs[n + 6] = 1.0    # presence bit
 
         return obs 
         # Return the 54-vector array of the observation
@@ -102,74 +200,50 @@ class PyhouEnv(gym.Env):
         return observation, info
     
     def step(self, action):
-        """
-        Alpha stage rewards : 
-        -0.0015 (30/18000) per step penalty. (chaneg is TIME_LIMIT is changed)
-        +1 per enemy_hits
-        -0.5 per player_hits
-        +100 per win
-        -150 per loss
-        """
-
         prev_player_bullets_hit = self.game.player.player_bullets_hit
         prev_enemy_bullets_hit = self.game.player.enemy_bullets_hit
 
         self.game.apply_step(action)
         terminated = self.game.is_terminated()
         truncated = self.game.is_truncated() # Replace this to False to use the built-in TimeLimit wrapper
-        reward = 0 
-
-        reward += self.reward.get("time_penalty", 0) # time_penalty
-
-        # Bullet hits related reward
+        reward = 0.0
+        if self.game.tick < self.iter // 4:
+            reward += self.reward.get("time_penalty_early", 0.0) # time_penalty at first
+        else:
+            reward += self.reward.get("time_penalty_late", 0.0) 
+        #Bullet hits related
         enemy_hits = self.game.player.player_bullets_hit - prev_player_bullets_hit
         player_hits = self.game.player.enemy_bullets_hit - prev_enemy_bullets_hit
 
-        reward += enemy_hits * self.reward.get("enemy_hit", 0)
-        reward += player_hits * self.reward.get("player_hit", 0)
-        
-
-        # Position related hits
-        to_enemy = self.game.enemy.pos - self.game.player.pos
-        angle = abs(to_enemy.angle_to(pygame.math.Vector2(0, -1))) 
-
-        if angle > 5:
-            reward += (angle - 5) * self.reward.get("oor_penalty", 0)
-
-        # aligned_pos step
-        shootable = self.game.player.pos.y > self.game.enemy.pos.y
-
-        if (angle <= 2 and shootable):
-            reward += self.reward.get("aligned_pos", 0)
-
-        # bettering angle approach
-        angle_del = - (angle - self.prev_angle)
-
-        
-        if shootable and angle_del > 0:
-            reward += angle_del * self.reward.get("better_pos", 0)
-
-        self.prev_angle = angle
-        
-        # Proxim reward
-        for bullet in self.game.enemy.bullets:
-            dist = self.game.player.pos.distance_to(bullet.pos)
-            bullet_to_player = self.game.player.pos - bullet.pos
-            threat = bullet_to_player.normalize() * bullet.vel
-            HIT_DIST = 12
-            THRESHOLD = 30
-            if dist <= THRESHOLD and threat > 0 and dist >= HIT_DIST:
-                reward += threat * (1 - dist/THRESHOLD) * self.reward.get("prox_reward", 0)
+        reward += enemy_hits * self.reward.get("enemy_hit", 0.0)
+        reward += player_hits * self.reward.get("player_hit", 0.0)
 
         if self.game.is_win():
-            reward += self.reward.get("win", 0)
-
+            reward += self.reward.get("win", 0.0)
         elif self.game.is_loss():
-            reward += self.reward.get("loss", 0)
+            reward += self.reward.get("loss", 0.0)
 
-        observation = self._get_obs()
+        if getattr(self, "build_obs", True):
+            observation = self._get_obs()
+        else:
+            observation = self._placeholder
+
         info = self._get_info()
 
+        danger = self._get_danger()
+        gate = 1 - danger
+        prox = danger
+
+        # proximity penalty
+        reward += prox * self.reward.get("prox_reward", 0.0)
+
+       
+        if action[2] == 1:
+            angle = get_angle_pos(self.game.enemy, self.game.player)
+            aligned = math.exp(-(angle / SIGMA) ** 2)
+            reward += gate * aligned * self.reward.get("aligned_shoot", 0.0)
+
+        
         if self.render_mode == "human":
             self._render_frame()
 

@@ -12,22 +12,24 @@ class Player:
         self.BASE_SPEED = 5
         self.pos = Vector2(pos_x, pos_y)
         self.vel = Vector2(0,0)
+        self.speed = 0
         self.r = 7
         self.bullets = []
         self.cooldown_time = 10
         self.cooldown_time_slow = 8
         self.shot_cooldown = 0
+        self.is_slow = False
 
         self.bullets_shot = 0
         self.enemy_bullets_hit = 0 # A bullet hit player
         self.player_bullets_hit = 0 # A bullet hit enemy
 
-    def update_pos(self, is_slow):
+    def update_pos(self):
 
-        speed = self.BASE_SPEED if not(is_slow) else self.BASE_SPEED/3
+        self.speed = self.BASE_SPEED if not(self.is_slow) else self.BASE_SPEED/3
 
         if self.vel !=Vector2(0,0):
-            self.pos += Vector2.normalize(self.vel)*speed
+            self.pos += self.vel*self.speed
 
         if (self.pos.x < self.r): 
             self.pos.x = self.r
@@ -39,8 +41,8 @@ class Player:
         elif (self.pos.y > self.bound_h - self.r): 
             self.pos.y = self.bound_h - self.r
     
-    def shoot(self, is_slow):
-        if (is_slow):
+    def shoot(self):
+        if (self.is_slow):
             attack_degs = [pi/2-radians(2), pi/2, pi/2+radians(2)]
             speed = 12
         else:
@@ -55,7 +57,7 @@ class Player:
             
             self.bullets_shot += 1
 
-            if (is_slow):
+            if (self.is_slow):
                 self.shot_cooldown = self.cooldown_time_slow
             else:
                 self.shot_cooldown = self.cooldown_time
