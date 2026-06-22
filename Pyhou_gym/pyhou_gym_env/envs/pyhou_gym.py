@@ -9,29 +9,18 @@ from components.game_logic import Game
 from components.constants import *
 from pathlib import Path
 
-# def threat_score(bullet, player_pos, warning_zone_radius, speed_scale):
-#     to_player = player_pos - bullet.pos  # pygame.Vector2 subtraction
-#     distance = to_player.length()
-    
-#     if distance < 1e-6:
-#         return float('inf')
-    
-#     to_player_unit = to_player.normalize()
-#     dot = max(0, to_player_unit.dot(bullet.vel.normalize()))
-#     proximity = 1 - distance / warning_zone_radius
-#     speed_factor = bullet.speed
-    
-#     return dot * proximity * speed_factor
+
 D_SCALE = 40.0
 T_SCALE = 30.0
 NUM_SECTORS = 8
 N_IMMINENT = 3
 MAX_BULLET_SPEED = 40.0
+MAX_PLAYER_SPEED = 5.0
 D_REF = 200.0
 T_CAP = 120.0
 PROX_CAP = 4.0
 SIGMA = math.radians(6)
-OBS_SIZE = 38
+OBS_SIZE = 46 # Normal = 9 + 8 + 21 = 38 atau 9 + 8 = 17 (minus imminent bullet) atau 9 + 16 + 21 = 46(Waktu imminence) 
 TIME_LIMIT = 7200
 
 def cpa(bullet, player):
@@ -78,7 +67,6 @@ class PyhouEnv(gym.Env):
 
         json_path = Path(__file__).parent.parent.parent / "attacks"/ pattern # Ini nanti ganti
         self.game = Game(str(json_path))
-        # self.game = Game("test_attack.json")
         """ Take 1 : Reasonable Human Obs
         Player pos -> 2
         Enemy pos -> 2
@@ -121,7 +109,7 @@ class PyhouEnv(gym.Env):
         return d
     
     def _get_obs(self):
-        obs = np.zeros(38, dtype=np.float32)
+        obs = np.zeros(OBS_SIZE, dtype=np.float32)
         dx = self.game.enemy.pos.x - self.game.player.pos.x
         dy = self.game.player.pos.y - self.game.enemy.pos.y # in y coord, down is positive
         angle_pos = math.atan2(dx, dy) 
@@ -129,15 +117,16 @@ class PyhouEnv(gym.Env):
 
         obs[0] = self.game.player.pos.x / self.WIDTH # Player rel x pos
         obs[1] = self.game.player.pos.y / self.HEIGHT # Player rel y pos
-        obs[2] = dx / self.WIDTH # Enemy rel x pos
-        obs[3] = dy / self.HEIGHT # Enemy rel y pos
-        obs[4] = player_vel.x / MAX_BULLET_SPEED
-        obs[5] = player_vel.y / MAX_BULLET_SPEED
+        obs[2] = dx / self.WIDTH 
+        obs[3] = dy / self.HEIGHT
+        obs[4] = player_vel.x / MAX_PLAYER_SPEED
+        obs[5] = player_vel.y / MAX_PLAYER_SPEED
         obs[5] = 1.0 if self.game.player.is_slow else 0.0 
-        obs[7] = angle_pos / (math.pi/2)
+        obs[7] = angle_pos / (math.pi) 
         obs[8] = (TIME_LIMIT - self.game.tick)/TIME_LIMIT
 
         sector_threat = [0.0] * NUM_SECTORS
+        time_imminence = [0.0] * NUM_SECTORS
         cache = []
 
         for b in self.game.enemy.bullets:
@@ -148,16 +137,24 @@ class PyhouEnv(gym.Env):
             pos_vec = b.pos - self.game.player.pos
             s = sector_of(pos_vec)
             sector_threat[s] = max(sector_threat[s], threat)
+            time_imminence[s] = 1.0 - min(t, T_CAP) / T_CAP
             cache.append((threat, t, d_min, pos_vec, b))
 
         
-        for k in range(NUM_SECTORS):
-            obs[9 + k] = sector_threat[k]
+        # for j in range(NUM_SECTORS):
+        #     n = 9 + j
+        #     obs[n] = sector_threat[j]
 
 
+        for j in range(NUM_SECTORS):
+            n = 9 + 2 * j
+            obs[n] = sector_threat[j]
+            obs[n + 1] = time_imminence[j]
+
+        
         cache.sort(key=lambda c: c[0], reverse=True)
         for i in range(N_IMMINENT):
-            n = 17 + i * 7
+            n = 25 + i * 7 # 17 <-> 25
             if i < len(cache):
                 _, t, d_min, pos_vec, b = cache[i]
                 obs[n + 0] = pos_vec.x / self.WIDTH
@@ -169,7 +166,7 @@ class PyhouEnv(gym.Env):
                 obs[n + 6] = 1.0    # presence bit
 
         return obs 
-        # Return the 54-vector array of the observation
+        #Return the -vector array of the observation
 
     def _get_info(self):
         health = self.game.enemy.health

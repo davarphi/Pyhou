@@ -1,0 +1,32 @@
+Things to experiment : 
+
+1. Does FrameSkip actually affect anything?
+A : In Old model, 10 FrameSkip is better. Even in New model, 10 FrameSkip is better
+2.  Try the normalization of offset angle of the enemy with math.pi since atan2 goes from -pi to pi
+A : pi normal is better
+3.  Does adding time urgency, not only threat to sectors, add anything?
+4.  Does adding the imminent bullets actually change anything?
+
+To do: 
+Compare (by order) 
+
+Model A old With high FrameSkip
+Model A old with low frameksip (x)
+Model A with no FrameSkip (x)
+New model 
+New model with no FrameSkip 
+new model with angle offset pi normalization (pi is better)
+new model with urgency 
+new model with no imminent bullets.
+
+Default new model reward : 
+reward = {
+    "time_penalty_early": 0.002,
+    "time_penalty_late": -0.01,
+    "enemy_hit": 1,
+    "player_hit": -1,
+    "aligned_shoot": 0.02,
+    "prox_reward": -0.1,
+    "win":100,
+    "loss":-250
+}

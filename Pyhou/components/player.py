@@ -13,7 +13,7 @@ class Player:
         self.pos = Vector2(pos_x, pos_y)
         self.vel = Vector2(0,0)
         self.speed = 0
-        self.r = 7
+        self.r = PLAYER_SIZE
         self.bullets = []
         self.cooldown_time = 10
         self.cooldown_time_slow = 8

@@ -1,5 +1,5 @@
 import gymnasium as gym
-from pyhou_gym_env.envs.pyhou_gym import PyhouEnv
+from pyhou_gym_env.envs.pyhou_gym_old import PyhouEnvOld
 from pyhou_gym_env.wrappers import FrameSkip, InfoCallback
 from stable_baselines3 import PPO
 import time
@@ -11,7 +11,7 @@ parser.add_argument("--pattern", type=str, default="test_attack.json", help="Att
 parser.add_argument("--model", type=str, default="pyhou", help="Model to use")
 args = parser.parse_args()
 
-env = FrameSkip(PyhouEnv(render_mode="human", pattern=args.pattern), skip=10)
+env = FrameSkip(PyhouEnvOld(render_mode="human", pattern=args.pattern), skip=10)
 model = PPO.load(Path("models") / args.model, env=env)
 
 obs, info = env.reset()

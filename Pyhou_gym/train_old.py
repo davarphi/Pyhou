@@ -1,5 +1,5 @@
 import gymnasium as gym
-from pyhou_gym_env.envs.pyhou_gym import PyhouEnv
+from pyhou_gym_env.envs.pyhou_gym_old import PyhouEnvOld
 from pyhou_gym_env.wrappers import FrameSkip, InfoCallback
 import time
 import argparse
@@ -9,15 +9,15 @@ from stable_baselines3 import PPO
 
 # best so far
 reward = {
-    "time_penalty_early": 0.002,
-    "time_penalty_late": -0.01,
-    "enemy_hit": 1,
-    "player_hit": -1,
-    "aligned_shoot": 0.02,
-    "prox_reward": -0.1,
+    "time_penalty": -0.1,
+    "enemy_hit": 8,
+    "player_hit": -5,
+    "aligned_pos": 0.1,
+    "better_pos": 0.05,
+    "oor_penalty" : -0.1,
     "win":100,
-    "loss":-250
-}
+    "loss":-400
+} 
 
 def print_training_stat(reward_dict, iter):
     print(f"Training : {args.pattern}")
@@ -36,12 +36,12 @@ parser.add_argument("--iter", type=str, default=500000, help="Training iteration
 args = parser.parse_args()
 
 timestep = int(args.iter)
-env = FrameSkip(PyhouEnv(reward_dict=reward, pattern=args.pattern), skip=10)
+env = FrameSkip(PyhouEnvOld(reward_dict=reward, pattern=args.pattern), skip=4)
 
 model = PPO("MlpPolicy", env, verbose=1, ent_coef=0.01)
 print("Model training begin")
 print_training_stat(reward, timestep)
-model.learn(total_timesteps=timestep, callback=InfoCallback())
+model.learn(total_timesteps=timestep, callback=InfoCallback()) #45000 is enough i think
 print("Training finished")
 
 print_training_stat(reward, timestep)

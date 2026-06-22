@@ -7,7 +7,7 @@ from pygame.math import Vector2
 from components.game_logic import Game
 from pathlib import Path
 
-class PyhouEnv(gym.Env):
+class PyhouEnvOld(gym.Env):
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 60}
 
     # Here
@@ -92,7 +92,7 @@ class PyhouEnv(gym.Env):
 
         self.game.reset()
         to_enemy = self.game.enemy.pos - self.game.player.pos
-        self.prev_angle = abs(to_enemy.angle_to(pygame.math.Vector2(0, 1))) 
+        self.prev_angle = abs(to_enemy.angle_to(pygame.math.Vector2(0, -1))) 
         observation = self._get_obs()
         info = self._get_info()
 
@@ -128,7 +128,6 @@ class PyhouEnv(gym.Env):
         reward += enemy_hits * self.reward.get("enemy_hit", 0)
         reward += player_hits * self.reward.get("player_hit", 0)
         
-
         # Position related hits
         to_enemy = self.game.enemy.pos - self.game.player.pos
         angle = abs(to_enemy.angle_to(pygame.math.Vector2(0, -1))) 
@@ -152,14 +151,14 @@ class PyhouEnv(gym.Env):
         self.prev_angle = angle
         
         # Proxim reward
-        for bullet in self.game.enemy.bullets:
-            dist = self.game.player.pos.distance_to(bullet.pos)
-            bullet_to_player = self.game.player.pos - bullet.pos
-            threat = bullet_to_player.normalize() * bullet.vel
-            HIT_DIST = 12
-            THRESHOLD = 30
-            if dist <= THRESHOLD and threat > 0 and dist >= HIT_DIST:
-                reward += threat * (1 - dist/THRESHOLD) * self.reward.get("prox_reward", 0)
+        # for bullet in self.game.enemy.bullets:
+        #     dist = self.game.player.pos.distance_to(bullet.pos)
+        #     bullet_to_player = self.game.player.pos - bullet.pos
+        #     threat = bullet_to_player.normalize() * bullet.vel
+        #     HIT_DIST = 12
+        #     THRESHOLD = 30
+        #     if dist <= THRESHOLD and threat > 0 and dist >= HIT_DIST:
+        #         reward += threat * (1 - dist/THRESHOLD) * self.reward.get("prox_reward", 0)
 
         if self.game.is_win():
             reward += self.reward.get("win", 0)

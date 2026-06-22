@@ -12,7 +12,7 @@ class Enemy:
         self.pos = Vector2(pos_x, pos_y)
         self.vel = Vector2(0, 0)
         self.speed = 0
-        self.r = 14
+        self.r = ENEMY_SIZE
         self.health = 200.0
         self.bullets = []
         self.dummy = 0

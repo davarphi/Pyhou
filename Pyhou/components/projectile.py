@@ -12,7 +12,7 @@ class Projectile:
         self.pos = Vector2(pos_x, pos_y)
         self.speed = speed
         self.vel = Vector2(cos(angle), -sin(angle))*self.speed
-        self.r = 5
+        self.r = PROJECTILE_SIZE
         self.is_remove = False
 
     def update(self):
