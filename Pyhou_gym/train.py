@@ -36,7 +36,7 @@ parser.add_argument("--iter", type=str, default=500000, help="Training iteration
 args = parser.parse_args()
 
 timestep = int(args.iter)
-env = FrameSkip(PyhouEnv(reward_dict=reward, pattern=args.pattern), skip=10)
+env = FrameSkip(PyhouEnv(reward_dict=reward, pattern=args.pattern), skip=4)
 
 model = PPO("MlpPolicy", env, verbose=1, ent_coef=0.01)
 print("Model training begin")
