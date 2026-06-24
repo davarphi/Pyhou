@@ -19,7 +19,7 @@ MAX_PLAYER_SPEED = 5.0
 D_REF = 200.0
 T_CAP = 120.0
 PROX_CAP = 4.0
-SIGMA = math.radians(6)
+ANGLE_CAP = math.radians(6)
 OBS_SIZE = 46 # Normal = 9 + 8 + 21 = 38 atau 9 + 8 = 17 (minus imminent bullet) atau 9 + 16 + 21 = 46(Waktu imminence) 
 TIME_LIMIT = 7200
 
@@ -101,12 +101,12 @@ class PyhouEnv(gym.Env):
         self.prev_angle = None
     
     def _get_danger(self):
-        d = 0.0
+        danger = 0.0
         for b in self.game.enemy.bullets:
-            _, _, th = cpa(b, self.game.player)
-            if th > d:
-                d = th
-        return d
+            _, _, threat = cpa(b, self.game.player)
+            if threat > danger:
+                danger = threat
+        return danger
     
     def _get_obs(self):
         obs = np.zeros(OBS_SIZE, dtype=np.float32)
@@ -232,12 +232,12 @@ class PyhouEnv(gym.Env):
         prox = danger
 
         # proximity penalty
-        reward += prox * self.reward.get("prox_reward", 0.0)
+        reward += prox * self.reward.get("prox_penalty", 0.0)
 
        
         if action[2] == 1:
             angle = get_angle_pos(self.game.enemy, self.game.player)
-            aligned = math.exp(-(angle / SIGMA) ** 2)
+            aligned = math.exp(-(angle / ANGLE_CAP) ** 2)
             reward += gate * aligned * self.reward.get("aligned_shoot", 0.0)
 
         

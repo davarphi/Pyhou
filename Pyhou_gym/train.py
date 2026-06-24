@@ -14,7 +14,7 @@ reward = {
     "enemy_hit": 1,
     "player_hit": -1,
     "aligned_shoot": 0.02,
-    "prox_reward": -0.1,
+    "prox_penalty": -0.1,
     "win":100,
     "loss":-250
 }
