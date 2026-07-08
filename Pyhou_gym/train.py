@@ -32,7 +32,7 @@ def print_training_stat(reward_dict, iter):
 parser = argparse.ArgumentParser(description="Training an agent")
 parser.add_argument("--pattern", type=str, default="test_attack.json", help="Attack pattern to use")
 parser.add_argument("--save", type=str, default="pyhou", help="Saved model name")
-parser.add_argument("--iter", type=str, default=500000, help="Training iteration")
+parser.add_argument("--iter", type=str, default=1000000, help="Training iteration")
 args = parser.parse_args()
 
 timestep = int(args.iter)

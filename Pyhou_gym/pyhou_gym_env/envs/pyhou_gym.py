@@ -20,7 +20,7 @@ D_REF = 200.0
 T_CAP = 120.0
 PROX_CAP = 4.0
 ANGLE_CAP = math.radians(6)
-OBS_SIZE = 46 # Normal = 9 + 8 + 21 = 38 atau 9 + 8 = 17 (minus imminent bullet) atau 9 + 16 + 21 = 46(Waktu imminence) 
+OBS_SIZE = 17 # Normal = 9 + 8 + 21 = 38 atau 9 + 8 = 17 (minus imminent bullet) atau 9 + 16 + 21 = 46(Waktu imminence) 
 TIME_LIMIT = 7200
 
 def cpa(bullet, player):
@@ -137,33 +137,33 @@ class PyhouEnv(gym.Env):
             pos_vec = b.pos - self.game.player.pos
             s = sector_of(pos_vec)
             sector_threat[s] = max(sector_threat[s], threat)
-            time_imminence[s] = 1.0 - min(t, T_CAP) / T_CAP
+            #time_imminence[s] = 1.0 - min(t, T_CAP) / T_CAP
             cache.append((threat, t, d_min, pos_vec, b))
 
         
-        # for j in range(NUM_SECTORS):
-        #     n = 9 + j
-        #     obs[n] = sector_threat[j]
-
-
         for j in range(NUM_SECTORS):
-            n = 9 + 2 * j
+            n = 9 + j
             obs[n] = sector_threat[j]
-            obs[n + 1] = time_imminence[j]
+
+
+        # for j in range(NUM_SECTORS):
+        #     n = 9 + 2 * j
+        #     obs[n] = sector_threat[j]
+        #     obs[n + 1] = time_imminence[j]
 
         
-        cache.sort(key=lambda c: c[0], reverse=True)
-        for i in range(N_IMMINENT):
-            n = 25 + i * 7 # 17 <-> 25
-            if i < len(cache):
-                _, t, d_min, pos_vec, b = cache[i]
-                obs[n + 0] = pos_vec.x / self.WIDTH
-                obs[n + 1] = pos_vec.y / self.HEIGHT
-                obs[n + 2] = b.vel.x / MAX_BULLET_SPEED
-                obs[n + 3] = b.vel.y / MAX_BULLET_SPEED
-                obs[n + 4] = min(t, T_CAP) / T_CAP
-                obs[n + 5] = min(d_min, D_REF) / D_REF
-                obs[n + 6] = 1.0    # presence bit
+        # cache.sort(key=lambda c: c[0], reverse=True)
+        # for i in range(N_IMMINENT):
+        #     n = 17 + i * 7 # 17 <-> 25
+        #     if i < len(cache):
+        #         _, t, d_min, pos_vec, b = cache[i]
+        #         obs[n + 0] = pos_vec.x / self.WIDTH
+        #         obs[n + 1] = pos_vec.y / self.HEIGHT
+        #         obs[n + 2] = b.vel.x / MAX_BULLET_SPEED
+        #         obs[n + 3] = b.vel.y / MAX_BULLET_SPEED
+        #         obs[n + 4] = min(t, T_CAP) / T_CAP
+        #         obs[n + 5] = min(d_min, D_REF) / D_REF
+        #         obs[n + 6] = 1.0    # presence bit
 
         return obs 
         #Return the -vector array of the observation

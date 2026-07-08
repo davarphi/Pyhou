@@ -11,7 +11,7 @@ parser.add_argument("--pattern", type=str, default="test_attack.json", help="Att
 parser.add_argument("--model", type=str, default="pyhou", help="Model to use")
 args = parser.parse_args()
 
-env = FrameSkip(PyhouEnvOld(render_mode="human", pattern=args.pattern), skip=10)
+env = FrameSkip(PyhouEnvOld(render_mode="human", pattern=args.pattern), skip=20)
 model = PPO.load(Path("models") / args.model, env=env)
 
 obs, info = env.reset()
